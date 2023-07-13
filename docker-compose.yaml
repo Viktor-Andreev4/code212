@@ -1,0 +1,9 @@
+services:
+  mariadb:
+    image: "mariadb:10.10"
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MARIA_DATABASE: code212
+      MARIADB_ROOT_PASSWORD: password
