@@ -1,5 +1,6 @@
 package com.trading212.code212.repositories.entities;
 
+
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,7 @@ public class User implements UserDetails {
     private final String lastName;
     private final String email;
     private final String password;
-    private final Set<String> roles;
+    private final Set<Role> roles;
 
     public User(
             Integer id,
@@ -25,7 +26,7 @@ public class User implements UserDetails {
             String lastName,
             String email,
             String password,
-            Set<String> roles) {
+            Set<Role> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -40,8 +41,8 @@ public class User implements UserDetails {
                 map(this::mapRole).
                 collect(Collectors.toSet());
     }
-    private GrantedAuthority mapRole(String role){
-        return new SimpleGrantedAuthority(("ROLE_" + role));
+    private GrantedAuthority mapRole(Role role){
+        return new SimpleGrantedAuthority(("ROLE_" + role.name()));
     }
 
     @Override
