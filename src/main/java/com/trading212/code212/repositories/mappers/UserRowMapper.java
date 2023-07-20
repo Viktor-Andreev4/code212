@@ -1,7 +1,7 @@
 package com.trading212.code212.repositories.mappers;
 
 import com.trading212.code212.repositories.entities.Role;
-import com.trading212.code212.repositories.entities.User;
+import com.trading212.code212.repositories.entities.UserEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class UserRowMapper implements RowMapper<User> {
+public class UserRowMapper implements RowMapper<UserEntity> {
     private final JdbcTemplate jdbcTemplate;
 
     public UserRowMapper(JdbcTemplate jdbcTemplate) {
@@ -21,8 +21,8 @@ public class UserRowMapper implements RowMapper<User> {
     }
 
     @Override
-    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new User(
+    public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return new UserEntity(
                 rs.getInt("user_id"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),

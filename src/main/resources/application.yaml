@@ -5,3 +5,7 @@ spring:
     username: root
     password: 'password'
     pool-size: 30
+
+cors:
+  allowed-origins: "*"
+  allowed-methods: "*"

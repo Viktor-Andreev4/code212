@@ -1,7 +1,7 @@
 package com.trading212.code212.repositories.mysql;
 
 import com.trading212.code212.repositories.UserRepository;
-import com.trading212.code212.repositories.entities.User;
+import com.trading212.code212.repositories.entities.UserEntity;
 import com.trading212.code212.repositories.mappers.UserRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +11,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> getUserById(Integer id) {
+    public Optional<UserEntity> getUserById(Integer id) {
         var sql = """
                 SELECT *
                 FROM user
@@ -39,7 +40,18 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public User insertUser(User user) {
+    public List<UserEntity> getAllUsers() {
+        var sql = """
+                SELECT *
+                FROM user
+                LIMIT 100
+                """;
+
+        return jdbcTemplate.query(sql, userRowMapper);
+    }
+
+    @Override
+    public UserEntity insertUser(UserEntity user) {
         var sql = """
                 INSERT INTO user (first_name, last_name, email, password)
                      VALUES (?, ?, ?, ?)
@@ -57,8 +69,9 @@ public class MySQLUserRepository implements UserRepository {
                 return ps;
             }, keyHolder);
             Integer id = Objects.requireNonNull(keyHolder.getKey()).intValue();
-            jdbcTemplate.update(sql, keyHolder.getKey());
-            return new User(id, user.getFirstName(),
+            return new UserEntity(
+                    id,
+                    user.getFirstName(),
                     user.getLastName(),
                     user.getEmail(),
                     user.getPassword(),
@@ -73,10 +86,8 @@ public class MySQLUserRepository implements UserRepository {
                             FROM user
                             WHERE email = ?
                     """;
-        Object[] params = { email };
-
-        Integer count = jdbcTemplate.queryForObject(sql, params, Integer.class);
-        return count > 0;
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
     }
 
     @Override
@@ -86,9 +97,8 @@ public class MySQLUserRepository implements UserRepository {
                            FROM user
                           WHERE user_id = ?
                 """;
-        Object[] params = { userId };
-        Integer count = jdbcTemplate.queryForObject(sql, params, Integer.class);
-        return count > 0;
+        Integer count = jdbcTemplate.queryForObject(sql,Integer.class, userId);
+        return count != null && count > 0;
     }
 
     @Override
@@ -104,7 +114,14 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> selectUserByEmail(String email) {
-        return Optional.empty();
+    public Optional<UserEntity> selectUserByEmail(String email) {
+        var sql = """
+                SELECT *
+                FROM user
+                WHERE email = ?
+                """;
+        return jdbcTemplate.query(sql, userRowMapper, email)
+                .stream()
+                .findFirst();
     }
 }

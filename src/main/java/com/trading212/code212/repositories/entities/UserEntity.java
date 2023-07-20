@@ -12,15 +12,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-public class User implements UserDetails {
-    private final Integer id;
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final String password;
-    private final Set<Role> roles;
+public class UserEntity implements UserDetails {
+    private Integer id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private Set<Role> roles;
 
-    public User(
+    public UserEntity(
             Integer id,
             String firstName,
             String lastName,
@@ -33,6 +33,17 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.roles = new HashSet<>();
+    }
+
+    public UserEntity(
+        String firstName,
+        String lastName,
+        String email,
+        String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
     }
 
     @Override
