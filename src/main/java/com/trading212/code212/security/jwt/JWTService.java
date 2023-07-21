@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -30,6 +31,10 @@ public class JWTService {
     }
 
     public String issueToken(String subject, String ...scopes) {
+        return issueToken(subject, Map.of("scopes", scopes));
+    }
+
+    public String issueToken(String subject, List<String> scopes) {
         return issueToken(subject, Map.of("scopes", scopes));
     }
 
