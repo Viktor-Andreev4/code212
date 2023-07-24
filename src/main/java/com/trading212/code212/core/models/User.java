@@ -2,8 +2,6 @@ package com.trading212.code212.core.models;
 
 import com.trading212.code212.repositories.entities.Role;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Set;
 
