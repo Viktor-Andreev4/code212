@@ -6,14 +6,14 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class User {
+public class UserDTO {
 
     public final String firstName;
     public final String lastName;
     public final String email;
     public Set<Role> roles;
 
-    public User(String firstName, String lastName, String email, Set<Role> roles) {
+    public UserDTO(String firstName, String lastName, String email, Set<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

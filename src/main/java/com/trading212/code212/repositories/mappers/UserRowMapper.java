@@ -23,7 +23,7 @@ public class UserRowMapper implements RowMapper<UserEntity> {
     @Override
     public UserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new UserEntity(
-                rs.getInt("user_id"),
+                rs.getLong("user_id"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("email"),

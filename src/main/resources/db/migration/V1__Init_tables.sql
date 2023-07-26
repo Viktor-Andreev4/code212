@@ -19,14 +19,6 @@ CREATE TABLE user_role(
     PRIMARY KEY (user_id, role_id)
 );
 
-CREATE TABLE grade (
-    grade_id            INT AUTO_INCREMENT PRIMARY KEY,
-    user_id             INT NOT NULL,
-    grade               INT NOT NULL,
-    exam_id             INT NOT NULL,
-    CONSTRAINT FK_grade_user FOREIGN KEY (user_id) REFERENCES user(user_id)
-);
-
 CREATE TABLE exam (
     exam_id         INT AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(255) NOT NULL,
@@ -40,6 +32,15 @@ CREATE TABLE problem(
     description         TEXT        NOT NULL,
     input_url           TEXT        NOT NULL,
     output_url          TEXT        NOT NULL
+);
+
+CREATE TABLE grade (
+    grade_id            INT AUTO_INCREMENT PRIMARY KEY,
+    user_id             INT NOT NULL,
+    grade               INT NOT NULL,
+    problem_id             INT NOT NULL,
+    CONSTRAINT FK_grade_user FOREIGN KEY (user_id) REFERENCES user(user_id),
+    CONSTRAINT FK_grade_problem FOREIGN KEY (problem_id) REFERENCES problem(problem_id)
 );
 
 CREATE TABLE exam_problem(

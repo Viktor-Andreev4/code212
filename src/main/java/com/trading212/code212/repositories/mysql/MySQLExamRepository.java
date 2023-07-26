@@ -14,8 +14,10 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class MySQLExamRepository implements ExamRepository {
@@ -55,7 +57,7 @@ public class MySQLExamRepository implements ExamRepository {
     @Override
     public Optional<ExamEntity> getExamById(int id) {
         var sql = """
-                SELECT *
+                SELECT (exam_id, name, start_date, end_date)
                 FROM exam
                 WHERE exam_id = ?
                 """;
@@ -84,4 +86,28 @@ public class MySQLExamRepository implements ExamRepository {
                 """;
         return jdbcTemplate.update(sql, examID, problemID) > 0;
     }
+
+    @Override
+    public Set<ProblemEntity> getProblemsForExam(int examID) {
+        var sql = """
+        SELECT p.problem_id, p.title, p.description, p.input_url, p.output_url
+        FROM problem p
+        INNER JOIN exam_problem ep ON p.problem_id = ep.problem_id
+        WHERE ep.exam_id = ?
+        """;
+
+        return new HashSet<>(
+                jdbcTemplate.query(sql, new Object[]{examID}, (rs, rowNum) ->
+                        new ProblemEntity(
+                                rs.getLong("problem_id"),
+                                rs.getString("title"),
+                                rs.getString("description"),
+                                rs.getString("input_url"),
+                                rs.getString("output_url")
+                        )
+                )
+        );
+    }
+
+
 }

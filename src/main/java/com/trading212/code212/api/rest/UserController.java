@@ -30,6 +30,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> registerUser(
             @RequestBody UserRegistrationRequest request){
+
         userService.registerUser(request);
         String jwtToken = jwtService.issueToken(request.email(), "ROLE_USER");
         return ResponseEntity.ok()

@@ -13,4 +13,5 @@ public interface ExamRepository {
     Optional<ExamEntity> getExamById(int id);
     void deleteExamById(int id);
     boolean addProblemToExam(int examID, int problemID);
+    Set<ProblemEntity> getProblemsForExam(int examID);
 }

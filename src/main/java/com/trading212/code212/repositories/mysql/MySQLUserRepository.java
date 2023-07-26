@@ -30,7 +30,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public Optional<UserEntity> getUserById(Integer id) {
         var sql = """
-                SELECT *
+                SELECT user_id, first_name, last_name, email, password, role_id
                 FROM user
                 WHERE user_id = ?
                 """;
@@ -42,7 +42,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public List<UserEntity> getAllUsers() {
         var sql = """
-                SELECT *
+                SELECT user_id, first_name, last_name, email, password, role_id
                 FROM user
                 LIMIT 100
                 """;
@@ -68,7 +68,7 @@ public class MySQLUserRepository implements UserRepository {
                 ps.setString(4, user.getPassword());
                 return ps;
             }, keyHolder);
-            Integer id = Objects.requireNonNull(keyHolder.getKey()).intValue();
+            Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
             return new UserEntity(
                     id,
                     user.getFirstName(),
@@ -116,7 +116,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public Optional<UserEntity> selectUserByEmail(String email) {
         var sql = """
-                SELECT *
+                SELECT user_id, first_name, last_name, email, password, role_id
                 FROM user
                 WHERE email = ?
                 """;

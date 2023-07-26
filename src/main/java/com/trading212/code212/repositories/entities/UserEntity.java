@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public class UserEntity implements UserDetails {
-    private Integer id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
@@ -21,7 +21,7 @@ public class UserEntity implements UserDetails {
     private Set<Role> roles;
 
     public UserEntity(
-            Integer id,
+            Long id,
             String firstName,
             String lastName,
             String email,

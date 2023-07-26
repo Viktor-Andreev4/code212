@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Component
 public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
@@ -20,33 +17,36 @@ public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
     public SolutionCodeRowMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
     public SolutionCodeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new SolutionCodeEntity(
                 rs.getLong("code_submitted_id"),
                 rs.getString("code_url"),
-                new UserRowMapper(jdbcTemplate).mapRow(rs, rowNum),
-                new ProblemRowMapper().mapRow(rs, rowNum),
-                getLanguage(rs.getInt("language_id")),
-                getStatus(rs.getInt("status_id"))
+                rs.getLong("user_id"),
+                rs.getLong("problem_id"),
+                rs.getLong("language_id"),
+                rs.getLong("status_id")
+//                getLanguage(rs.getInt("language_id")),
+//                getStatus(rs.getInt("status_id"))
         );
     }
 
-    private String getLanguage(Integer languageId) {
-        String sql = """
-            SELECT l.name
-            FROM language l
-            WHERE l.language_id = ?
-        """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{languageId}, String.class);
-    }
-
-    private String getStatus(Integer statusId) {
-        String sql = """
-            SELECT name
-            FROM status
-            WHERE status_id = ?
-        """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{statusId}, String.class);
-    }
+//    private String getLanguage(Integer languageId) {
+//        String sql = """
+//            SELECT l.name
+//            FROM language l
+//            WHERE l.language_id = ?
+//        """;
+//        return jdbcTemplate.queryForObject(sql, new Object[]{languageId}, String.class);
+//    }
+//
+//    private String getStatus(Integer statusId) {
+//        String sql = """
+//            SELECT name
+//            FROM status
+//            WHERE status_id = ?
+//        """;
+//        return jdbcTemplate.queryForObject(sql, new Object[]{statusId}, String.class);
+//    }
 }

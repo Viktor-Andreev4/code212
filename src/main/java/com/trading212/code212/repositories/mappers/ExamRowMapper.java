@@ -27,24 +27,24 @@ public class ExamRowMapper implements RowMapper<ExamEntity> {
                 rs.getLong("exam_id"),
                 rs.getString("name"),
                 rs.getTimestamp("start").toLocalDateTime(),
-                rs.getTimestamp("end").toLocalDateTime(),
-                getProblemsByExamId(rs.getLong("exam_id"))
+                rs.getTimestamp("end").toLocalDateTime()
+//                getProblemsByExamId(rs.getLong("exam_id"))
         );
     }
 
-    private Set<ProblemEntity> getProblemsByExamId(Long examId) {
-        var sql = """
-                SELECT p.*
-                FROM problem p
-                INNER JOIN exam_problem ep ON p.problem_id = ep.problem_id
-                INNER JOIN exam e ON ep.exam_id = e.exam_id
-                WHERE ep.exam_id = ?
-                """;
-        return new HashSet<>(
-                jdbcTemplate.query(
-                sql,
-                new ProblemRowMapper(),
-                examId
-        ));
-    }
+//    private Set<ProblemEntity> getProblemsByExamId(Long problemId) {
+//        var sql = """
+//                SELECT p.*
+//                FROM problem p
+//                INNER JOIN exam_problem ep ON p.problem_id = ep.problem_id
+//                INNER JOIN exam e ON ep.exam_id = e.exam_id
+//                WHERE ep.exam_id = ?
+//                """;
+//        return new HashSet<>(
+//                jdbcTemplate.query(
+//                sql,
+//                new ProblemRowMapper(),
+//                problemId
+//        ));
+//    }
 }

@@ -11,19 +11,13 @@ import java.sql.SQLException;
 @Component
 public class GradeRowMapper implements RowMapper<GradeEntity> {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public GradeRowMapper(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     @Override
     public GradeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new GradeEntity(
                 rs.getLong("grade_id"),
-                new UserRowMapper(jdbcTemplate).mapRow(rs, rowNum),
+                rs.getLong("user_id"),
                 rs.getInt("grade"),
-                new ExamRowMapper(jdbcTemplate).mapRow(rs, rowNum)
+                rs.getLong("exam_id")
         );
     }
 }
