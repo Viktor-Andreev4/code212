@@ -18,7 +18,7 @@ public class UserEntity implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    private Set<Role> roles;
+    private Set<String> roles;
 
     public UserEntity(
             Long id,
@@ -26,13 +26,13 @@ public class UserEntity implements UserDetails {
             String lastName,
             String email,
             String password,
-            Set<Role> roles) {
+            Set<String> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.roles = new HashSet<>();
+        this.roles = roles;
     }
 
     public UserEntity(
@@ -52,8 +52,8 @@ public class UserEntity implements UserDetails {
                 map(this::mapRole).
                 collect(Collectors.toSet());
     }
-    private GrantedAuthority mapRole(Role role){
-        return new SimpleGrantedAuthority(("ROLE_" + role.name()));
+    private GrantedAuthority mapRole(String role){
+        return new SimpleGrantedAuthority(("ROLE_" + role));
     }
 
     @Override

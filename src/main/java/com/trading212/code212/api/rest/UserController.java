@@ -39,8 +39,10 @@ public class UserController {
     }
 
     @GetMapping(value = "/{id}")
-    public UserEntity getStudent(@PathVariable Integer id){
+    public UserEntity getStudent(@PathVariable Long id){
         return userService.getStudentById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
     }
+
+
 }

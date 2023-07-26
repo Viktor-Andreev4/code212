@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -23,6 +22,6 @@ public class AuthenticationController {
         AuthenticationResponse authenticationResponse = authenticationService.login(request);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, authenticationResponse.token())
-                .build();
+                .body(authenticationResponse);
     }
 }

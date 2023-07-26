@@ -1,6 +1,5 @@
 package com.trading212.code212.repositories.mappers;
 
-import com.trading212.code212.repositories.entities.Role;
 import com.trading212.code212.repositories.entities.UserEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -32,14 +31,14 @@ public class UserRowMapper implements RowMapper<UserEntity> {
         );
     }
 
-    private Set<Role> getUserRoles(Integer userId) {
+    private Set<String> getUserRoles(Integer userId) {
         var sql = """ 
-                SELECT r.role_id, r.name
+                SELECT r.name
                 FROM role r
                 INNER JOIN user_role ur ON r.role_id = ur.role_id
                 WHERE ur.user_id = ?
                 """;
-        List<Role> list = jdbcTemplate.queryForList(sql, new Object[]{userId}, Role.class);
+        List<String> list = jdbcTemplate.queryForList(sql, new Object[]{userId}, String.class);
         return new HashSet<>(list);
     }
 }

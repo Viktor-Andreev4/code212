@@ -5,7 +5,6 @@ import com.trading212.code212.api.rest.model.AuthenticationResponse;
 import com.trading212.code212.core.models.UserDTO;
 import com.trading212.code212.core.models.UserDTOMapper;
 import com.trading212.code212.repositories.UserRepository;
-import com.trading212.code212.repositories.entities.Role;
 import com.trading212.code212.repositories.entities.UserEntity;
 import com.trading212.code212.security.jwt.JWTService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AuthenticationService {
@@ -34,24 +34,24 @@ public class AuthenticationService {
 
 
     public AuthenticationResponse login(AuthenticationRequest request) {
-//        boolean existsUserWithEmail = userRepository
-//                .existsUserWithEmail(request.username());
-//        if (!existsUserWithEmail) {
-//            throw new IllegalArgumentException("Invalid username or password");
-//        }
+        Optional<UserEntity> userEntity = userRepository
+                .selectUserByEmail(request.username());
+
+        if (userEntity.isEmpty()) {
+            throw new IllegalArgumentException("Invalid username or password");
+        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()
+                        userEntity.get().getEmail(),
+                        request.password(),
+                        userEntity.get().getAuthorities()
                 )
         );
         UserEntity principal = (UserEntity) authentication.getPrincipal();
-        UserDTO user = userDTOMapper.apply(principal);
-        List<String> rolesList = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            rolesList.add(role.name());
-        }
-        String token = jwtService.issueToken(user.getEmail(), rolesList);
-        return new AuthenticationResponse(token, user);
+        UserDTO userDTO = userDTOMapper.apply(principal);
+        List<String> rolesList = new ArrayList<>(userDTO.roles);
+        String token = jwtService.issueToken(userDTO.getEmail(), rolesList);
+        return new AuthenticationResponse(token, userDTO);
     }
 }

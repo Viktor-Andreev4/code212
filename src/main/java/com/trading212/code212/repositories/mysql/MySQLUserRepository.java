@@ -28,7 +28,7 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<UserEntity> getUserById(Integer id) {
+    public Optional<UserEntity> getUserById(Long id) {
         var sql = """
                 SELECT user_id, first_name, last_name, email, password, role_id
                 FROM user
@@ -79,6 +79,8 @@ public class MySQLUserRepository implements UserRepository {
         });
     }
 
+
+
     @Override
     public boolean existsUserWithEmail(String email) {
         String sql = """
@@ -91,7 +93,19 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean existsUserById(Integer userId) {
+    public void insertUserRole(Long userId) {
+        var sql = """
+                INSERT INTO user_role (user_id, role_id)
+                     VALUES (?, ?)
+                """;
+        txTemplate.execute(status -> {
+            jdbcTemplate.update(sql, userId, 1);
+            return null;
+        });
+    }
+
+    @Override
+    public boolean existsUserById(Long userId) {
         var sql = """
                 SELECT COUNT(*) 
                            FROM user
@@ -102,7 +116,7 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public void deleteUserById(Integer userId) {
+    public void deleteUserById(Long userId) {
         var sql = """
                 DELETE FROM user
                       WHERE user_id = ?

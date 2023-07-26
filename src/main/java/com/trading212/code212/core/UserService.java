@@ -28,7 +28,9 @@ public class UserService {
                 request.email(),
                 passwordEncoder.encode(request.password())
         );
-        return repository.insertUser(user);
+        UserEntity userEntity = repository.insertUser(user);
+        repository.insertUserRole(userEntity.getId());
+        return userEntity;
     }
 
     private boolean existsUserWithEmail(String email){
@@ -36,7 +38,7 @@ public class UserService {
     }
 
 
-    public Optional<UserEntity> getStudentById(Integer userId){
+    public Optional<UserEntity> getStudentById(Long userId){
         return repository.getUserById(userId);
     }
     public List<UserEntity> getAllUsers(){

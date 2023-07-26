@@ -1,6 +1,5 @@
 package com.trading212.code212.repositories.mappers;
 
-import com.trading212.code212.repositories.entities.Role;
 import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
