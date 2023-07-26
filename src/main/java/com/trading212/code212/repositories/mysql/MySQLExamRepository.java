@@ -4,6 +4,7 @@ import com.trading212.code212.repositories.ExamRepository;
 import com.trading212.code212.repositories.entities.ExamEntity;
 import com.trading212.code212.repositories.entities.ProblemEntity;
 import com.trading212.code212.repositories.mappers.ExamRowMapper;
+import com.trading212.code212.repositories.mappers.ProblemRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -25,11 +26,13 @@ public class MySQLExamRepository implements ExamRepository {
     private final JdbcTemplate jdbcTemplate;
     private final TransactionTemplate txTemplate;
     private final ExamRowMapper examRowMapper;
+    private final ProblemRowMapper problemRowMapper;
 
-    public MySQLExamRepository(JdbcTemplate jdbcTemplate, TransactionTemplate txTemplate, ExamRowMapper examRowMapper) {
+    public MySQLExamRepository(JdbcTemplate jdbcTemplate, TransactionTemplate txTemplate, ExamRowMapper examRowMapper, ProblemRowMapper problemRowMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.txTemplate = txTemplate;
         this.examRowMapper = examRowMapper;
+        this.problemRowMapper = problemRowMapper;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class MySQLExamRepository implements ExamRepository {
     @Override
     public Optional<ExamEntity> getExamById(int id) {
         var sql = """
-                SELECT (exam_id, name, start_date, end_date)
+                SELECT exam_id, name, start_date, end_date
                 FROM exam
                 WHERE exam_id = ?
                 """;
@@ -97,15 +100,7 @@ public class MySQLExamRepository implements ExamRepository {
         """;
 
         return new HashSet<>(
-                jdbcTemplate.query(sql, new Object[]{examID}, (rs, rowNum) ->
-                        new ProblemEntity(
-                                rs.getLong("problem_id"),
-                                rs.getString("title"),
-                                rs.getString("description"),
-                                rs.getString("input_url"),
-                                rs.getString("output_url")
-                        )
-                )
+                jdbcTemplate.query(sql, problemRowMapper, examID)
         );
     }
 

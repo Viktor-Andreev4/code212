@@ -28,7 +28,7 @@ public class ExamRowMapper implements RowMapper<ExamEntity> {
                 rs.getString("name"),
                 rs.getTimestamp("start").toLocalDateTime(),
                 rs.getTimestamp("end").toLocalDateTime()
-//                getProblemsByExamId(rs.getLong("exam_id"))
+                //getProblemsByExamId(rs.getLong("exam_id"))
         );
     }
 

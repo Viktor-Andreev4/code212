@@ -34,6 +34,12 @@ CREATE TABLE problem(
     output_url          TEXT        NOT NULL
 );
 
+CREATE TABLE exam_problem(
+    exam_id         INT REFERENCES exam(exam_id),
+    problem_id      INT REFERENCES problem(problem_id),
+    PRIMARY KEY (exam_id, problem_id)
+);
+
 CREATE TABLE grade (
     grade_id            INT AUTO_INCREMENT PRIMARY KEY,
     user_id             INT NOT NULL,
@@ -41,12 +47,6 @@ CREATE TABLE grade (
     problem_id             INT NOT NULL,
     CONSTRAINT FK_grade_user FOREIGN KEY (user_id) REFERENCES user(user_id),
     CONSTRAINT FK_grade_problem FOREIGN KEY (problem_id) REFERENCES problem(problem_id)
-);
-
-CREATE TABLE exam_problem(
-    exam_id         INT REFERENCES exam(exam_id),
-    problem_id      INT REFERENCES problem(problem_id),
-    PRIMARY KEY (exam_id, problem_id)
 );
 
 CREATE TABLE language(
