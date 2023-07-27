@@ -15,10 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class MySQLExamRepository implements ExamRepository {
@@ -58,7 +55,7 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public Optional<ExamEntity> getExamById(int id) {
+    public Optional<ExamEntity> getExamById(Long id) {
         var sql = """
                 SELECT exam_id, name, start_date, end_date
                 FROM exam
@@ -70,7 +67,7 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public void deleteExamById(int id) {
+    public void deleteExamById(Long id) {
         var sql = """
                 DELETE FROM exam
                 WHERE exam_id = ?
@@ -82,7 +79,7 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public boolean addProblemToExam(int examID, int problemID) {
+    public boolean addProblemToExam(Long examID, Long problemID) {
         var sql = """
                 INSERT INTO exam_problem (exam_id, problem_id)
                 VALUES (?, ?)
@@ -91,7 +88,7 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public Set<ProblemEntity> getProblemsForExam(int examID) {
+    public Set<ProblemEntity> getProblemsForExam(Long examID) {
         var sql = """
         SELECT p.problem_id, p.title, p.description, p.input_url, p.output_url
         FROM problem p
@@ -102,6 +99,20 @@ public class MySQLExamRepository implements ExamRepository {
         return new HashSet<>(
                 jdbcTemplate.query(sql, problemRowMapper, examID)
         );
+    }
+
+    @Override
+    public ExamEntity getUpcomingExam(LocalDateTime currentTime) {
+        var sql = """
+                SELECT exam_id, name, start_date, end_date
+                FROM exam
+                WHERE start_date > ?
+                ORDER BY start_date ASC
+                LIMIT 1
+                """;
+        List<ExamEntity> exams =
+                jdbcTemplate.query(sql, examRowMapper, currentTime);
+        return exams.isEmpty() ? null : exams.get(0);
     }
 
 

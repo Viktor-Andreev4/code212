@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.Statement;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -77,5 +78,14 @@ public class MySQLProblemRepository implements ProblemRepository {
             jdbcTemplate.update(sql, id);
             return null;
         });
+    }
+
+    @Override
+    public List<ProblemEntity> getAllProblems() {
+        var sql = """
+                SELECT problem_id, title, description, input_url, output_url
+                FROM problem
+                """;
+        return jdbcTemplate.query(sql, problemRowMapper);
     }
 }

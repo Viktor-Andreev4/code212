@@ -12,7 +12,7 @@ public class ProblemRowMapper implements RowMapper<ProblemEntity> {
     @Override
     public ProblemEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new ProblemEntity(
-                rs.getLong("id"),
+                rs.getLong("problem_id"),
                 rs.getString("title"),
                 rs.getString("description"),
                 rs.getString("input_url"),

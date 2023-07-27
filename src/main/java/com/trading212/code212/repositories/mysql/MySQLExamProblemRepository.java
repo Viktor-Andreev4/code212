@@ -26,14 +26,14 @@ public class MySQLExamProblemRepository implements ExamProblemRepository {
     }
 
     @Override
-    public ExamProblemEntity addProblemToExam(ExamProblemEntity examProblemEntity) {
+    public ExamProblemEntity addProblemToExam(Long examId, Long problemId) {
         var sql = """
                 INSERT INTO exam_problem (exam_id, problem_id)
                 VALUES (?, ?)
                 """;
         return txTemplate.execute(status -> {
-            jdbcTemplate.update(sql, examProblemEntity.examId(), examProblemEntity.problemId());
-            return examProblemEntity;
+            jdbcTemplate.update(sql, examId, problemId);
+            return new ExamProblemEntity(examId, problemId);
         });
     }
 

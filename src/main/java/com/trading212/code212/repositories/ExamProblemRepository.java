@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface ExamProblemRepository {
 
-    ExamProblemEntity addProblemToExam(ExamProblemEntity examProblemEntity);
+    ExamProblemEntity addProblemToExam(Long examId, Long problemId);
     boolean updateExamProblem(ExamProblemEntity examProblemEntity, Long newProblemId);
     Optional<ExamProblemEntity> getExamProblem(Long examId, Long problemId);
     void deleteExamProblem(Long examId, Long problemId);
