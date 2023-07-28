@@ -21,5 +21,14 @@ public class CodeController {
         return codeService.getUserCode(userId);
     }
 
-
+    @PostMapping(
+            value = "{customerId}/profile-image",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public void uploadUserCode(
+            @PathVariable("userId") Long userId,
+            @RequestParam("problem") Long problemId,
+            @RequestParam("file") MultipartFile file) {
+        codeService.uploadCustomerProfileImage(userId, problemId, file);
+    }
 }

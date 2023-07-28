@@ -37,6 +37,10 @@ public class UserService {
         return repository.existsUserWithEmail(email);
     }
 
+    public boolean existsUserWithId(Long userId){
+        return repository.existsUserWithId(userId);
+    }
+
 
     public Optional<UserEntity> getStudentById(Long userId){
         return repository.getUserById(userId);

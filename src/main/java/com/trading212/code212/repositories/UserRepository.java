@@ -10,7 +10,7 @@ public interface UserRepository {
     UserEntity insertUser(UserEntity user);
     boolean existsUserWithEmail(String email);
     void insertUserRole(Long userId);
-    boolean existsUserById(Long userId);
+    boolean existsUserWithId(Long userId);
     void deleteUserById(Long userId);
     Optional<UserEntity> selectUserByEmail(String email);
 }

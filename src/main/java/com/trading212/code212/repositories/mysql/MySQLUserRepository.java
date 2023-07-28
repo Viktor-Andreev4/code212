@@ -105,7 +105,7 @@ public class MySQLUserRepository implements UserRepository {
     }
 
     @Override
-    public boolean existsUserById(Long userId) {
+    public boolean existsUserWithId(Long userId) {
         var sql = """
                 SELECT COUNT(*) 
                            FROM user
