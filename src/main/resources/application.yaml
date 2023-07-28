@@ -11,3 +11,9 @@ cors:
   allowed-methods: "*"
   allowed-headers: "*"
   exposed-headers: "*"
+
+aws:
+  region: eu-central-1
+  s3:
+    buckets:
+      user: code212-user-code
