@@ -66,4 +66,11 @@ public class ExamService {
                 .map(Mappers::fromUserEntity)
                 .toList();
     }
+
+    public List<ExamDTO> getAllExams() {
+        return examRepository.getAllExams()
+                .stream()
+                .map(Mappers::fromExamEntity)
+                .toList();
+    }
 }

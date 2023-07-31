@@ -7,6 +7,8 @@ import com.trading212.code212.core.models.ExamDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/exams")
 public class ExamController {
@@ -34,9 +36,13 @@ public class ExamController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("{examId}/enroll")
+    @GetMapping("{examId}/participants")
     public ResponseEntity<?> getAllUsersForExamWithId(@PathVariable Long examId) {
         return ResponseEntity.ok(examService.getAllUsersForExamWithId(examId));
     }
 
+    @GetMapping("/all")
+    public List<ExamDTO> getAllExams() {
+        return examService.getAllExams();
+    }
 }

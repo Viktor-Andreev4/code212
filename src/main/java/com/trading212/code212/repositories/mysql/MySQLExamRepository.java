@@ -1,5 +1,6 @@
 package com.trading212.code212.repositories.mysql;
 
+import com.trading212.code212.core.models.ExamDTO;
 import com.trading212.code212.repositories.ExamRepository;
 import com.trading212.code212.repositories.entities.ExamEntity;
 import com.trading212.code212.repositories.entities.ProblemEntity;
@@ -119,6 +120,15 @@ public class MySQLExamRepository implements ExamRepository {
         return exams.isEmpty() ? null : exams.get(0);
     }
 
+    @Override
+    public List<ExamEntity> getAllExams() {
+        var sql = """
+                SELECT exam_id, name, start_date, end_date
+                FROM exam
+                """;
+        List<ExamEntity> query = jdbcTemplate.query(sql, examRowMapper);
+        return query;
+    }
 
 
 }
