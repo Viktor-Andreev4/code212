@@ -4,9 +4,11 @@ package com.trading212.code212.core;
 import com.trading212.code212.core.models.ExamDTO;
 import com.trading212.code212.core.models.GradeDTO;
 import com.trading212.code212.core.models.ProblemDTO;
+import com.trading212.code212.core.models.UserDTO;
 import com.trading212.code212.repositories.entities.ExamEntity;
 import com.trading212.code212.repositories.entities.GradeEntity;
 import com.trading212.code212.repositories.entities.ProblemEntity;
+import com.trading212.code212.repositories.entities.UserEntity;
 
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ class Mappers {
 
     public static ExamDTO fromExamEntity(ExamEntity examEntity) {
         return new ExamDTO(
+                examEntity.id(),
                 examEntity.name(),
                 examEntity.startDate(),
                 examEntity.endDate(),
@@ -34,7 +37,14 @@ class Mappers {
         );
     }
 
-
+    public static UserDTO fromUserEntity(UserEntity userEntity) {
+        return new UserDTO(
+                userEntity.getFirstName(),
+                userEntity.getLastName(),
+                userEntity.getEmail(),
+                userEntity.getRoles()
+        );
+    }
 //    public static GradeDTO fromGradeEntity(GradeEntity gradeEntity) {
 //        return new GradeDTO(
 //                gradeEntity.id(),

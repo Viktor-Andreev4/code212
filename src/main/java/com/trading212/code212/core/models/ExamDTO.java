@@ -11,6 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 public class ExamDTO {
+    private Long id;
     private String name;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

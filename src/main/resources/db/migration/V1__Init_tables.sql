@@ -21,7 +21,7 @@ CREATE TABLE user_role(
 
 CREATE TABLE exam (
     exam_id         INT AUTO_INCREMENT PRIMARY KEY,
-    name            VARCHAR(255) NOT NULL,
+    name            VARCHAR(255) NOT NULL UNIQUE,
     start_date      DATETIME NOT NULL,
     end_date        DATETIME NOT NULL
 );
@@ -38,6 +38,12 @@ CREATE TABLE exam_problem(
     exam_id         INT REFERENCES exam(exam_id),
     problem_id      INT REFERENCES problem(problem_id),
     PRIMARY KEY (exam_id, problem_id)
+);
+
+CREATE TABLE exam_user(
+    exam_id         INT REFERENCES exam(exam_id),
+    user_id         INT REFERENCES user(user_id),
+    PRIMARY KEY (exam_id, user_id)
 );
 
 CREATE TABLE grade (

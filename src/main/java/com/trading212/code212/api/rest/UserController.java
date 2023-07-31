@@ -44,5 +44,13 @@ public class UserController {
                 .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
     }
 
+    @GetMapping("/email/{email}")
+    public Long getUserIdByEmail(@PathVariable String email){
+        return userService.getUserIdByEmail(email);
+    }
+
+
+
+
 
 }

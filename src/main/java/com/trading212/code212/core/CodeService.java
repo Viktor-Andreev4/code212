@@ -5,7 +5,6 @@ import com.trading212.code212.exceptions.FileFailedUploadException;
 import com.trading212.code212.repositories.UserRepository;
 import com.trading212.code212.s3.S3Buckets;
 import com.trading212.code212.s3.S3Service;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +31,7 @@ public class CodeService {
         return null;
     }
 
-    public void uploadCustomerProfileImage(Long userId, Long problemId, MultipartFile file) {
+    public void uploadUserCode(Long userId, Long problemId, MultipartFile file) {
         if (!userRepository.existsUserWithId(userId)) {
             throw new IllegalArgumentException("User with id " + userId + " does not exist");
         }

@@ -102,8 +102,12 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public ExamEntity getUpcomingExam(LocalDateTime currentTime) {
+    public ExamEntity getUpcomingOrOngoingExam(LocalDateTime currentTime) {
         var sql = """
+                SELECT exam_id, name, start_date, end_date
+                FROM exam
+                WHERE start_date <= ? AND end_date >= ?
+                UNION
                 SELECT exam_id, name, start_date, end_date
                 FROM exam
                 WHERE start_date > ?
@@ -111,9 +115,10 @@ public class MySQLExamRepository implements ExamRepository {
                 LIMIT 1
                 """;
         List<ExamEntity> exams =
-                jdbcTemplate.query(sql, examRowMapper, currentTime);
+                jdbcTemplate.query(sql, examRowMapper, currentTime, currentTime, currentTime);
         return exams.isEmpty() ? null : exams.get(0);
     }
+
 
 
 }

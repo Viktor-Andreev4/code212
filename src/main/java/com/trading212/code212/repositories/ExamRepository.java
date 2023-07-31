@@ -14,5 +14,5 @@ public interface ExamRepository {
     void deleteExamById(Long id);
     boolean addProblemToExam(Long examID, Long problemID);
     Set<ProblemEntity> getProblemsForExam(Long examID);
-    ExamEntity getUpcomingExam(LocalDateTime currentTime);
+    ExamEntity getUpcomingOrOngoingExam(LocalDateTime currentTime);
 }

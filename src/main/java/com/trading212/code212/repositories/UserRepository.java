@@ -13,4 +13,5 @@ public interface UserRepository {
     boolean existsUserWithId(Long userId);
     void deleteUserById(Long userId);
     Optional<UserEntity> selectUserByEmail(String email);
+    Long getUserIdByEmail(String email);
 }

@@ -138,4 +138,15 @@ public class MySQLUserRepository implements UserRepository {
                 .stream()
                 .findFirst();
     }
+
+    @Override
+    public Long getUserIdByEmail(String email) {
+        var sql = """
+                SELECT user_id
+                FROM user
+                WHERE email = ?
+                """;
+        Long id = jdbcTemplate.queryForObject(sql, Long.class, email);
+        return id;
+    }
 }

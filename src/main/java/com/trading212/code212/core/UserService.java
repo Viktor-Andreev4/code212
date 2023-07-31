@@ -41,11 +41,14 @@ public class UserService {
         return repository.existsUserWithId(userId);
     }
 
-
     public Optional<UserEntity> getStudentById(Long userId){
         return repository.getUserById(userId);
     }
     public List<UserEntity> getAllUsers(){
         return repository.getAllUsers();
+    }
+
+    public Long getUserIdByEmail(String email){
+        return repository.getUserIdByEmail(email);
     }
 }
