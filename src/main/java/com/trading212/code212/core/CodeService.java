@@ -23,7 +23,8 @@ public class CodeService {
         this.s3Buckets = s3Buckets;
     }
 
-    public SolutionCodeDTO insertSolutionCode() {
+    public SolutionCodeDTO insertSolutionCode(Long userId, Long problemId, MultipartFile file) {
+
         return null;
     }
 
@@ -31,20 +32,5 @@ public class CodeService {
         return null;
     }
 
-    public void uploadUserCode(Long userId, Long problemId, MultipartFile file) {
-        if (!userRepository.existsUserWithId(userId)) {
-            throw new IllegalArgumentException("User with id " + userId + " does not exist");
-        }
 
-        try {
-            s3Service.putObject(
-                    s3Buckets.getUser(),
-                    "code/%s/%s".formatted(userId, problemId),
-                    file.getBytes()
-            );
-        } catch (IOException e) {
-            throw new FileFailedUploadException(
-                    "Failed to upload file problem with id %s by %s user", problemId, userId);
-        }
-    }
 }

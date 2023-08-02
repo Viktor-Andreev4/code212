@@ -56,7 +56,7 @@ public class ExamService {
             System.out.println("User is already enrolled");
             return;
         }
-        userExamRepository.insertUserExam(request.userId(), request.examId());
+        userExamRepository.insertUserExam(request.examId(), request.userId());
     }
 
     public List<UserDTO> getAllUsersForExamWithId(Long examId) {

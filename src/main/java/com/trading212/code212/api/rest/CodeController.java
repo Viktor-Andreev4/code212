@@ -2,6 +2,7 @@ package com.trading212.code212.api.rest;
 
 import com.trading212.code212.core.CodeService;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,7 @@ public class CodeController {
             @PathVariable("userId") Long userId,
             @RequestParam("problem") Long problemId,
             @RequestParam("file") MultipartFile file) {
-        codeService.uploadUserCode(userId, problemId, file);
+        codeService.insertSolutionCode(userId, problemId, file);
     }
+
 }

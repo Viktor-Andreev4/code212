@@ -1,21 +1,35 @@
 package com.trading212.code212.core;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.trading212.code212.api.rest.model.ProblemRequest;
 import com.trading212.code212.core.models.ProblemDTO;
 import com.trading212.code212.repositories.ProblemRepository;
 import com.trading212.code212.repositories.entities.ProblemEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ProblemService {
 
     private final ProblemRepository problemRepository;
+    private GeneratePresignedUrlRequest generatePresignedUrlRequest;
+    private final String bucketName;
 
-    public ProblemService(ProblemRepository problemRepository) {
+    private final AmazonS3 s3;
+
+    private Date expiration;
+
+    public ProblemService(ProblemRepository problemRepository, AmazonS3 s3) {
         this.problemRepository = problemRepository;
+        this.s3 = s3;
+        this.expiration = expiration;
+        this.bucketName = "code212-problems";
+
     }
 
     public ProblemDTO getProblemById(Long id) {
@@ -39,4 +53,22 @@ public class ProblemService {
         );
         return Mappers.fromProblemEntity(problem);
     }
+
+    public String generatePresignedUrl(String objectKey) {
+        expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60 * 60;
+        expiration.setTime(expTimeMillis);
+
+        generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, objectKey)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(expiration);
+        URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+
+        return url.toString();
+    }
+
+
+
 }

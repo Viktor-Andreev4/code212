@@ -1,6 +1,6 @@
 package com.trading212.code212.repositories.mysql;
 
-import com.trading212.code212.repositories.SolutionCodeRepository;
+import com.trading212.code212.repositories.CodeRepository;
 import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.repositories.mappers.SolutionCodeRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,14 +15,14 @@ import java.util.Objects;
 import java.util.Set;
 
 @Repository
-public class MySQLSolutionCodeRepository implements SolutionCodeRepository {
+public class MySQLCodeRepository implements CodeRepository {
 
 
     private final JdbcTemplate jdbcTemplate;
     private final TransactionTemplate txTemplate;
     private final SolutionCodeRowMapper solutionCodeRowMapper;
 
-    public MySQLSolutionCodeRepository(
+    public MySQLCodeRepository(
             JdbcTemplate jdbcTemplate,
             TransactionTemplate txTemplate,
             SolutionCodeRowMapper solutionCodeRowMapper
