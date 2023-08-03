@@ -51,7 +51,7 @@ public class AuthenticationService {
         UserEntity principal = (UserEntity) authentication.getPrincipal();
         UserDTO userDTO = userDTOMapper.apply(principal);
         List<String> rolesList = new ArrayList<>(userDTO.roles);
-        String token = jwtService.issueToken(userDTO.getEmail(), rolesList);
+        String token = jwtService.issueToken(userDTO.getEmail(), userEntity.get().getId(), rolesList);
         return new AuthenticationResponse(token, userDTO);
     }
 }

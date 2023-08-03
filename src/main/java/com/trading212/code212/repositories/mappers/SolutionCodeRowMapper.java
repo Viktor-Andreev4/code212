@@ -23,9 +23,9 @@ public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
                 rs.getLong("code_submitted_id"),
                 rs.getString("code_url"),
                 rs.getLong("user_id"),
-                rs.getLong("problem_id"),
-                rs.getLong("language_id"),
-                rs.getLong("status_id")
+                rs.getInt("problem_id"),
+                rs.getInt("language_id"),
+                rs.getInt("status_id")
 //                getLanguage(rs.getInt("language_id")),
 //                getStatus(rs.getInt("status_id"))
         );

@@ -4,8 +4,8 @@ public record SolutionCodeEntity(
         Long id,
         String codeUrl,
         Long userId,
-        Long problemId,
-        Long languageId,
-        Long statusId
+        int problemId,
+        int languageId,
+        int statusId
 ) {
 }

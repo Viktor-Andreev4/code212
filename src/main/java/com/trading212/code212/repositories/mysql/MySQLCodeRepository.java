@@ -33,7 +33,7 @@ public class MySQLCodeRepository implements CodeRepository {
     }
 
     @Override
-    public SolutionCodeEntity insertSolutionCode(String codeUrl, long userId, long problemId, long languageId, long statusId) {
+    public SolutionCodeEntity insertSolutionCode(String codeUrl, long userId, int problemId, int languageId, int statusId) {
         var sql = """
                 INSERT INTO solution_code (code_url, user_id, problem_id, language_id, status_id)
                      VALUES (?, ?, ?, ?, ?)

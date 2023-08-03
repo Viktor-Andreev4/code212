@@ -35,20 +35,15 @@ public class ProblemController {
     }
 
     @GetMapping("/upload/input")
-    public String generateUploadUrlForInput(@RequestParam String problemName) {
-        String objectKey = problemName + "/input";
-
-        String s = problemService.generatePresignedUrl(objectKey);
-        System.out.println(s);
-        return s;
+    public String generateUploadUrlForInput(@RequestParam String problemName, @RequestParam String fileName) {
+        String objectKey = problemName + "/input/" + fileName;
+        return problemService.generatePresignedUrl(objectKey);
     }
 
     @GetMapping("/upload/output")
-    public String generateUploadUrlForOutput(@RequestParam String problemName) {
-        String objectKey = problemName + "/output";
-        String s = problemService.generatePresignedUrl(objectKey);
-        System.out.println(s);
-        return s;
+    public String generateUploadUrlForOutput(@RequestParam String problemName, @RequestParam String fileName) {
+        String objectKey = problemName + "/output/" + fileName;
+        return problemService.generatePresignedUrl(objectKey);
     }
 
 

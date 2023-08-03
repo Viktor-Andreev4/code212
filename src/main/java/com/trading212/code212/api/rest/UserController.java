@@ -31,8 +31,9 @@ public class UserController {
     public ResponseEntity<?> registerUser(
             @RequestBody UserRegistrationRequest request){
 
-        userService.registerUser(request);
-        String jwtToken = jwtService.issueToken(request.email(), "ROLE_USER");
+
+        Long id = userService.registerUser(request).getId();
+        String jwtToken = jwtService.issueToken(request.email(), id, "ROLE_USER");
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .build();

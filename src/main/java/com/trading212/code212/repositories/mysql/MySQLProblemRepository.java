@@ -45,7 +45,7 @@ public class MySQLProblemRepository implements ProblemRepository {
                 ps.setString(4, outputUrl);
                 return ps;
             }, keyHolder);
-            Long id = (long) Objects.requireNonNull(keyHolder.getKey()).intValue();
+            int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
             return new ProblemEntity(
                     id,
                     title,
@@ -57,7 +57,7 @@ public class MySQLProblemRepository implements ProblemRepository {
     }
 
     @Override
-    public Optional<ProblemEntity> getProblemById(Long id) {
+    public Optional<ProblemEntity> getProblemById(int id) {
         var sql = """
                 SELECT *
                 FROM problem

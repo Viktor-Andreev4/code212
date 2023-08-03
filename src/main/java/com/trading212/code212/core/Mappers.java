@@ -1,14 +1,8 @@
 package com.trading212.code212.core;
 
 
-import com.trading212.code212.core.models.ExamDTO;
-import com.trading212.code212.core.models.GradeDTO;
-import com.trading212.code212.core.models.ProblemDTO;
-import com.trading212.code212.core.models.UserDTO;
-import com.trading212.code212.repositories.entities.ExamEntity;
-import com.trading212.code212.repositories.entities.GradeEntity;
-import com.trading212.code212.repositories.entities.ProblemEntity;
-import com.trading212.code212.repositories.entities.UserEntity;
+import com.trading212.code212.core.models.*;
+import com.trading212.code212.repositories.entities.*;
 
 import java.util.stream.Collectors;
 
@@ -45,6 +39,21 @@ class Mappers {
                 userEntity.getRoles()
         );
     }
+
+
+    //code
+    public static SolutionCodeDTO fromSolutionCodeEntity(SolutionCodeEntity solutionCodeEntity) {
+        return new SolutionCodeDTO(
+                solutionCodeEntity.codeUrl(),
+                solutionCodeEntity.userId(),
+                solutionCodeEntity.problemId(),
+                solutionCodeEntity.languageId(),
+                solutionCodeEntity.statusId()
+        );
+    }
+
+
+
 //    public static GradeDTO fromGradeEntity(GradeEntity gradeEntity) {
 //        return new GradeDTO(
 //                gradeEntity.id(),

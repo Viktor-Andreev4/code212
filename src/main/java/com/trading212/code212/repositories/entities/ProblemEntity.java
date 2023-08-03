@@ -1,7 +1,7 @@
 package com.trading212.code212.repositories.entities;
 
 public record ProblemEntity(
-        Long id,
+        int id,
         String title,
         String description,
         String inputUrl,

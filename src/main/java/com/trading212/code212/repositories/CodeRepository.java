@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface CodeRepository {
 
-    SolutionCodeEntity insertSolutionCode(String codeUrl, long userId, long problemId, long languageId, long statusId);
+    SolutionCodeEntity insertSolutionCode(String codeUrl, long userId, int problemId, int languageId, int statusId);
 
     Set<SolutionCodeEntity> getSolutionCodeProblemByUserId(long userId, long problemId);
 

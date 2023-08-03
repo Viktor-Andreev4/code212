@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProblemService {
@@ -32,8 +33,29 @@ public class ProblemService {
 
     }
 
-    public ProblemDTO getProblemById(Long id) {
-        return null;
+    public ProblemDTO getProblemById(int id) {
+
+        Optional<ProblemEntity> problem = problemRepository.getProblemById(id);
+        if (problem.isEmpty()) {
+            throw new RuntimeException("Problem not found");
+        }
+        return Mappers.fromProblemEntity(problem.get());
+    }
+
+    public String getProblemInputUrl(int id) {
+        Optional<ProblemEntity> problem = problemRepository.getProblemById(id);
+        if (problem.isEmpty()) {
+            throw new RuntimeException("Problem not found");
+        }
+        return problem.get().inputUrl();
+    }
+
+    public String getProblemOutputUrl(int id) {
+        Optional<ProblemEntity> problem = problemRepository.getProblemById(id);
+        if (problem.isEmpty()) {
+            throw new RuntimeException("Problem not found");
+        }
+        return problem.get().outputUrl();
     }
 
     public List<ProblemDTO> getAllProblems() {
@@ -63,7 +85,8 @@ public class ProblemService {
         generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, objectKey)
                         .withMethod(HttpMethod.PUT)
-                        .withExpiration(expiration);
+                        .withExpiration(expiration)
+                        .withContentType("text/plain");
         URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
 
         return url.toString();
