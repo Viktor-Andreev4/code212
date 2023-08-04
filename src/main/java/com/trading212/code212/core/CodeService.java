@@ -3,7 +3,7 @@ package com.trading212.code212.core;
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.models.SolutionCodeDTO;
 import com.trading212.code212.core.models.SubmissionRequest;
-import com.trading212.code212.core.models.SubmissionResponse;
+import com.trading212.code212.core.models.Submission;
 import com.trading212.code212.core.models.TokenResponse;
 import com.trading212.code212.repositories.CodeRepository;
 import com.trading212.code212.repositories.LanguageRepository;
@@ -11,12 +11,11 @@ import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.s3.S3Buckets;
 import com.trading212.code212.s3.S3Service;
 
-import org.apache.el.parser.Token;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,34 +100,27 @@ public class CodeService {
     }
 
 
-    public List<SubmissionResponse> getBatchCodeResponse(List<TokenResponse> tokens) {
+    public List<Submission> getBatchCodeResponse(List<TokenResponse> tokens) {
         return judgeOApi.getBatchCodeResponse(tokens);
     }
-    public List<String> getOutputForProblem(int problemId) {
+    public List<String> getFilesForProblem(int problemId, String fileType) {
+        String problemName = problemService.getProblemNameById(problemId) + "/" + fileType;
 
-        String problemName = problemService.getProblemNameById(problemId) + "/output";
+        List<byte[]> filesBytes = s3Service.getObjects("code212-problems", problemName);
 
-
-        List<byte[]> inputFilesBytes = s3Service.getObjects("code212-problems", problemName);
-
-        List<String> list = inputFilesBytes.stream()
-                .map(String::new)
-                .toList();
+        List<String> list = filesBytes.stream()
+                .map(bytes -> new String(bytes, StandardCharsets.UTF_8))
+                .collect(Collectors.toList());
         System.out.println(list);
         return list;
+    }
+
+    public List<String> getOutputForProblem(int problemId) {
+        return getFilesForProblem(problemId, "output");
     }
 
     public List<String> getInputForProblem(int problemId) {
-        String problemName = problemService.getProblemNameById(problemId) + "/input";
-
-
-        List<byte[]> inputFilesBytes = s3Service.getObjects("code212-problems", problemName);
-
-        List<String> list = inputFilesBytes.stream()
-                .map(String::new)
-                .toList();
-        System.out.println(list);
-        return list;
+        return getFilesForProblem(problemId, "input");
     }
 
 

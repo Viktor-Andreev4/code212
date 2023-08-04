@@ -1,11 +1,11 @@
 package com.trading212.code212.core.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 public class StatusDTO {
-    @JsonProperty("id")
+    @SerializedName("id")
     private final int id;
-    @JsonProperty("description")
+    @SerializedName("description")
     private final String description;
 
     public StatusDTO(int id, String description) {

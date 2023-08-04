@@ -2,11 +2,8 @@ package com.trading212.code212.api.rest;
 
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.CodeService;
-import com.trading212.code212.core.models.SolutionCodeDTO;
-import com.trading212.code212.core.models.SubmissionResponse;
+import com.trading212.code212.core.models.Submission;
 import com.trading212.code212.core.models.TokenResponse;
-import com.trading212.code212.s3.S3Service;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +37,7 @@ public class CodeController {
     }
 
     @GetMapping("/batch")
-    public List<SubmissionResponse> getBatchCodeResponse(@RequestParam("token") List<TokenResponse> tokens) {
+    public List<Submission> getBatchCodeResponse(@RequestParam("token") List<TokenResponse> tokens) {
         return codeService.getBatchCodeResponse(tokens);
     }
 
