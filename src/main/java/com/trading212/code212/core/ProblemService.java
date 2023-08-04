@@ -92,6 +92,13 @@ public class ProblemService {
         return url.toString();
     }
 
+    public String getProblemNameById(int problemId) {
+        Optional<ProblemEntity> problem = problemRepository.getProblemById(problemId);
+        if (problem.isEmpty()) {
+            throw new RuntimeException("Problem not found");
+        }
+        return problem.get().title();
+    }
 
 
 }

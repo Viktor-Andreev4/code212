@@ -10,5 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class S3Buckets {
 
     private String user;
+    private String problems;
 
 }

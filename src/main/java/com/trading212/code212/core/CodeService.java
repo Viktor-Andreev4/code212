@@ -2,15 +2,24 @@ package com.trading212.code212.core;
 
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.models.SolutionCodeDTO;
+import com.trading212.code212.core.models.SubmissionRequest;
+import com.trading212.code212.core.models.SubmissionResponse;
+import com.trading212.code212.core.models.TokenResponse;
 import com.trading212.code212.repositories.CodeRepository;
 import com.trading212.code212.repositories.LanguageRepository;
 import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.s3.S3Buckets;
 import com.trading212.code212.s3.S3Service;
 
+import org.apache.el.parser.Token;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CodeService {
@@ -20,13 +29,15 @@ public class CodeService {
     private final ProblemService problemService;
     private final S3Service s3Service;
     private final S3Buckets s3Buckets;
+    private final JudgeOApi judgeOApi;
 
-    public CodeService(CodeRepository codeRepository, LanguageRepository languageRepository, ProblemService problemService, S3Service s3Service, S3Buckets s3Buckets) {
+    public CodeService(CodeRepository codeRepository, LanguageRepository languageRepository, ProblemService problemService, S3Service s3Service, S3Buckets s3Buckets, JudgeOApi judgeOApi) {
         this.codeRepository = codeRepository;
         this.languageRepository = languageRepository;
         this.problemService = problemService;
         this.s3Service = s3Service;
         this.s3Buckets = s3Buckets;
+        this.judgeOApi = judgeOApi;
     }
 
     public SolutionCodeDTO insertSolutionCode(UserCodeRequest request) {
@@ -63,17 +74,68 @@ public class CodeService {
         return solutionCodeDTO;
     }
 
+    public List<TokenResponse> executeCode(UserCodeRequest request) {
+        String encodedString = Base64.getEncoder().encodeToString(request.code().getBytes());
+        List<SubmissionRequest> submissionRequests = new ArrayList<>();
+            submissionRequests.add(new SubmissionRequest(
+                    62,
+                    encodedString,
+                    "MQ==" // 1
+            ));
+        submissionRequests.add(new SubmissionRequest(
+                62,
+                encodedString,
+                "Mg==" // 2
+        ));
+        submissionRequests.add(new SubmissionRequest(
+                62,
+                encodedString,
+                "Mw==" //3
+        ));
 
-    private List<String> getInputForProblem(int problemId) {
-        // get the input for the problem
+        try {
+            return judgeOApi.executeBatchCode(submissionRequests);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        return null;
+
+    public List<SubmissionResponse> getBatchCodeResponse(List<TokenResponse> tokens) {
+        return judgeOApi.getBatchCodeResponse(tokens);
+    }
+    public List<String> getOutputForProblem(int problemId) {
+
+        String problemName = problemService.getProblemNameById(problemId) + "/output";
+
+
+        List<byte[]> inputFilesBytes = s3Service.getObjects("code212-problems", problemName);
+
+        List<String> list = inputFilesBytes.stream()
+                .map(String::new)
+                .toList();
+        System.out.println(list);
+        return list;
+    }
+
+    public List<String> getInputForProblem(int problemId) {
+        String problemName = problemService.getProblemNameById(problemId) + "/input";
+
+
+        List<byte[]> inputFilesBytes = s3Service.getObjects("code212-problems", problemName);
+
+        List<String> list = inputFilesBytes.stream()
+                .map(String::new)
+                .toList();
+        System.out.println(list);
+        return list;
     }
 
 
     public byte[] getUserCode(Long userId) {
         return null;
     }
+
 
 
 }

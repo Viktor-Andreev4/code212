@@ -3,6 +3,8 @@ package com.trading212.code212.api.rest;
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.CodeService;
 import com.trading212.code212.core.models.SolutionCodeDTO;
+import com.trading212.code212.core.models.SubmissionResponse;
+import com.trading212.code212.core.models.TokenResponse;
 import com.trading212.code212.s3.S3Service;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +16,9 @@ import java.util.List;
 public class CodeController {
 
     private final CodeService codeService;
-    private final S3Service s3Service;
 
-    public CodeController(CodeService codeService, S3Service s3Service) {
+    public CodeController(CodeService codeService) {
         this.codeService = codeService;
-        this.s3Service = s3Service;
     }
 
     @GetMapping("/{userId}")
@@ -27,17 +27,27 @@ public class CodeController {
         return codeService.getUserCode(userId);
     }
 
-    @PostMapping(
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    public SolutionCodeDTO uploadUserCode(@RequestBody UserCodeRequest request) {
-        return codeService.insertSolutionCode(request);
+//    @PostMapping(
+//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+//    )
+//    public SolutionCodeDTO uploadUserCode(@RequestBody UserCodeRequest request) {
+//        return codeService.insertSolutionCode(request);
+//    }
+
+    @PostMapping
+    public List<TokenResponse> test(@RequestBody UserCodeRequest request) {
+        return codeService.executeCode(request);
     }
 
-    @GetMapping
-    public String test() {
-        byte[] printNumbers = s3Service.getObject("code212-problems", "print numbers/input02.txt");
-        return new String(printNumbers);
+    @GetMapping("/batch")
+    public List<SubmissionResponse> getBatchCodeResponse(@RequestParam("token") List<TokenResponse> tokens) {
+        return codeService.getBatchCodeResponse(tokens);
     }
+
+    @GetMapping("/input")
+    public List<String> getBatchCodeResponse() {
+        return codeService.getOutputForProblem(40);
+    }
+
 
 }

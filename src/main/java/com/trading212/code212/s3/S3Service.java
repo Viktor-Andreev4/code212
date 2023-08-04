@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,15 +45,31 @@ public class S3Service {
         }
     }
 
-//    public List<String> getObjects(String bucketName, String prefix) {
-//        try (final S3Object s3Object = amazonS3Client.getObject(BUCKET_NAME,
-//                FILE_NAME);
-//             final InputStreamReader streamReader = new InputStreamReader(s3Object.getObjectContent(), StandardCharsets.UTF_8);
-//             final BufferedReader reader = new BufferedReader(streamReader)) {
-//            return reader.lines().collect(Collectors.toSet());
-//        } catch (final IOException e) {
-//            log.error(e.getMessage(), e)
-//            return Collections.emptySet();
-//        }
-//    }
+    public List<byte[]> getObjects(String bucketName, String folderKey) {
+
+        ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(folderKey)
+                .build();
+
+        ListObjectsV2Response listObjectsRes = s3Client.listObjectsV2(listObjectsReqManual);
+
+        List<byte[]> fileDataList = new ArrayList<>();
+
+        for (S3Object s3Object : listObjectsRes.contents()) {
+            GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(s3Object.key())
+                    .build();
+
+            try {
+                ResponseInputStream<GetObjectResponse> objectData = s3Client.getObject(getObjectRequest);
+                fileDataList.add(objectData.readAllBytes());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return fileDataList;
+    }
 }
