@@ -1,6 +1,9 @@
 package com.trading212.code212.core.models;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TokenResponse {
+    @SerializedName("token")
     private String token;
 
     public TokenResponse(String token) {

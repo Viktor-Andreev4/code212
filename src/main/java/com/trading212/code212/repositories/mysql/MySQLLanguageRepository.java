@@ -18,7 +18,8 @@ public class MySQLLanguageRepository implements LanguageRepository {
 
     @Override
     public LanguageEntity getLanguageByName(String language) {
-        var sql = "SELECT id FROM languages WHERE name = ?";
+        System.out.println(language);
+        var sql = "SELECT language_id, name FROM language WHERE name = ?";
         return jdbcTemplate.queryForObject(sql, languageRowMapper, language);
     }
 }

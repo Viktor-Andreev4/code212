@@ -2,7 +2,7 @@ package com.trading212.code212.api.rest;
 
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.CodeService;
-import com.trading212.code212.core.models.Submission;
+import com.trading212.code212.core.models.SubmissionDTO;
 import com.trading212.code212.core.models.TokenResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,20 +31,15 @@ public class CodeController {
 //        return codeService.insertSolutionCode(request);
 //    }
 
-    @PostMapping
-    public List<TokenResponse> test(@RequestBody UserCodeRequest request) {
-        return codeService.executeCode(request);
-    }
 
-    @GetMapping("/batch")
-    public List<Submission> getBatchCodeResponse(@RequestParam("token") List<TokenResponse> tokens) {
-        return codeService.getBatchCodeResponse(tokens);
+    @PostMapping("/execute")
+    public List<SubmissionDTO> getBatchCodeResponse(@RequestBody UserCodeRequest request) {
+        return codeService.executeCode(request);
     }
 
     @GetMapping("/input")
     public List<String> getBatchCodeResponse() {
         return codeService.getOutputForProblem(40);
     }
-
 
 }

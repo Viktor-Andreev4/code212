@@ -12,7 +12,7 @@ public class LanguageRowMapper implements RowMapper<LanguageEntity> {
     @Override
     public LanguageEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new LanguageEntity(
-                rs.getInt("id"),
+                rs.getInt("language_id"),
                 rs.getString("name")
         );
     }

@@ -11,5 +11,5 @@ import java.util.List;
 public class SubmissionResponse {
 
     @SerializedName("submissions")
-    private List<Submission> submissions;
+    private List<SubmissionDTO> submissionDTOs;
 }
