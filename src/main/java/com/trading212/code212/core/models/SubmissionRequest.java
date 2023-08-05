@@ -1,6 +1,7 @@
 package com.trading212.code212.core.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,7 +14,10 @@ public class SubmissionRequest {
     private String sourceCode;
     @JsonProperty("stdin")
     private String stdin;
-
+    @JsonProperty("expected_output")
+    private String expectedOutput;
+    @JsonProperty("callback_url")
+    private String callbackUrl;
 //    @JsonProperty("compiler_options")
 //    private String compilerOptions;
 //    @JsonProperty("expected_output")

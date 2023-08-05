@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+// TODO MOVE IT TO USER CONTROLLER
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {

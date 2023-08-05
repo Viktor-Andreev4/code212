@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.trading212.code212.core.models.*;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class JudgeOImpl implements JudgeOApi {
@@ -49,7 +51,7 @@ public class JudgeOImpl implements JudgeOApi {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
+        System.out.println("Response body from executeBatchCode\n" + response.body());
         return parseJsonToTokensResponse(response.body());
     }
 
@@ -67,15 +69,16 @@ public class JudgeOImpl implements JudgeOApi {
 
 
     private List<TokenResponse> parseJsonToTokensResponse(String json) {
+        System.out.println("Parsing tokens");
         Type listType = new TypeToken<List<TokenResponse>>(){}.getType();
         return gson.fromJson(json, listType);
     }
 
     @Override
-    public List<SubmissionDTO> getBatchCodeResponse(List<TokenResponse> tokens) {
+    public List<SubmissionResponse> getBatchCodeResponse(List<String> tokens) {
         String separatedTokens = concatenateTokenValues(tokens, tokenSeparator);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://judge0-ce.p.rapidapi.com/submissions/batch?tokens=" + separatedTokens + "&fields=*"))
+                .uri(URI.create("https://judge0-ce.p.rapidapi.com/submissions/batch?tokens=" + separatedTokens + "&base64_encoded=true&fields=*"))
                 .header("X-RapidAPI-Key", "bdeda95a1dmsh52a5dcfa61ac38cp1095fdjsn5d333499eee4")
                 .header("X-RapidAPI-Host", "judge0-ce.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
@@ -86,18 +89,21 @@ public class JudgeOImpl implements JudgeOApi {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Response body from getBatchCodeResponse\n" + response.body());
 
-
-        return parseJsonToSubmissionResponse(response.body()).getSubmissionDTOs();
+        return parseJsonToSubmissionResponse(response.body());
     }
 
-    private SubmissionResponse parseJsonToSubmissionResponse(String json) {
-        return gson.fromJson(json, SubmissionResponse.class);
+    private List<SubmissionResponse> parseJsonToSubmissionResponse(String json) {
+        System.out.println("Parsing submissions");
+
+        SubmissionsWrapper wrapper = gson.fromJson(json, SubmissionsWrapper.class);
+        return wrapper.getSubmissions();
     }
-    private String concatenateTokenValues(List<TokenResponse> tokens, String separator) {
-        return String.join(separator, tokens.stream()
-                .map(TokenResponse::getToken)
-                .toArray(String[]::new));
+
+
+    private String concatenateTokenValues(List<String> tokens, String separator) {
+        return String.join(separator, tokens);
     }
 
 

@@ -1,26 +1,32 @@
 package com.trading212.code212.core.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Objects;
 
-// TODO turn into record
 @Data
 @AllArgsConstructor
 public class SubmissionDTO {
-    @SerializedName("source_code")
+    @JsonProperty("source_code")
     private String sourceCode;
-    @SerializedName("language_id")
+    @JsonProperty("language_id")
     private int languageId;
-    @SerializedName("stderr")
+    @JsonProperty("stdin")
+    private String stdin;
+    @JsonProperty("expected_output")
+    private String expectedOutput;
+    @JsonProperty("stdout")
+    private String stdout;
+    @JsonProperty("stderr")
     private String stderr;
-    @SerializedName("status")
+    @JsonProperty("status")
     private StatusDTO status;
-    @SerializedName("created_at")
+    @JsonProperty("created_at")
     private String createdAt;
-
+    private int index;
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -3,6 +3,8 @@ package com.trading212.code212.api.rest;
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.CodeService;
 import com.trading212.code212.core.models.SubmissionDTO;
+import com.trading212.code212.core.models.SubmissionRequest;
+import com.trading212.code212.core.models.SubmissionResponse;
 import com.trading212.code212.core.models.TokenResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,27 +20,23 @@ public class CodeController {
         this.codeService = codeService;
     }
 
-    @GetMapping("/{userId}")
-    public byte[] getUserCode(
-            @PathVariable("userId") Long userId) {
-        return codeService.getUserCode(userId);
-    }
-
-//    @PostMapping(
-//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-//    )
-//    public SolutionCodeDTO uploadUserCode(@RequestBody UserCodeRequest request) {
-//        return codeService.insertSolutionCode(request);
-//    }
-
 
     @PostMapping("/execute")
-    public List<SubmissionDTO> getBatchCodeResponse(@RequestBody UserCodeRequest request) {
+    public List<SubmissionResponse> getBatchCodeResponse(@RequestBody UserCodeRequest request) {
         return codeService.executeCode(request);
     }
 
+    @PutMapping("/submissions/{userId}")
+    public void getBatchCodeResponse(@RequestBody SubmissionResponse submission, @PathVariable Long userId) {
+        System.out.println("HIT");
+        codeService.removeSubmissionFromWaitingList(submission, userId);
+    }
+
+
+
     @GetMapping("/input")
     public List<String> getBatchCodeResponse() {
+        // TODO CHANGE
         return codeService.getOutputForProblem(40);
     }
 

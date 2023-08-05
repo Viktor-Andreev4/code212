@@ -41,6 +41,9 @@ public class SecurityFilterChainConfig {
                                         "api/v1/users",
                                         "api/v1/auth/login")
                                 .permitAll()
+                                .requestMatchers(HttpMethod.PUT,
+                                        "api/v1/code/submissions/**")
+                                .permitAll()
                                 .anyRequest()
                                 .authenticated()
                               )

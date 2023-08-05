@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +24,9 @@ public class CodeService {
     private final S3Service s3Service;
     private final S3Buckets s3Buckets;
     private final JudgeOApi judgeOApi;
+    private String SUBMISSIONS_URL = "https://89f6-149-62-206-206.ngrok-free.app/api/v1/code/submissions/";
+    private Map<Long, Set<String>> userSubmissions = new ConcurrentHashMap<>();
+
 
     public CodeService(CodeRepository codeRepository, LanguageRepository languageRepository, ProblemService problemService, S3Service s3Service, S3Buckets s3Buckets, JudgeOApi judgeOApi) {
         this.codeRepository = codeRepository;
@@ -62,52 +66,60 @@ public class CodeService {
         return null;
     }
 
-    public List<SubmissionDTO> executeCode(UserCodeRequest request) {
-        String encodedString = Base64.getEncoder().encodeToString(request.code().getBytes());
-        List<String> encodedInput = getInputForProblem(request.problemId());
+    public List<SubmissionResponse> executeCode(UserCodeRequest request) {
 
+        String encodedCode = getEncodedString(request.code());
+        List<String> encodedInput = getInputForProblem(request.problemId())
+                .stream()
+                .map(this::getEncodedString)
+                .toList();
+        List<String> encodedOutput = getOutputForProblem(request.problemId())
+                .stream()
+                .map(this::getEncodedString)
+                .toList();
+
+        int testCases = encodedInput.size();
+        System.out.println("Encoded input: " + encodedInput);
         int languageId = 52; // 62 - java 52 - c++//languageRepository.getLanguageByName(request.language()).id();
 
         List<SubmissionRequest> submissionRequests = new ArrayList<>();
         for (int i = 0; i < encodedInput.size(); i++) {
             submissionRequests.add(new SubmissionRequest(
                     languageId,
-                    encodedString,
-                    encodedInput.get(i)
+                    encodedCode,
+                    encodedInput.get(i),
+                    encodedOutput.get(i),
+                    SUBMISSIONS_URL + request.userId()
             ));
         }
+
+        // DEBUG
+        submissionRequests.stream().forEach(submissionRequest -> {
+            System.out.println(submissionRequest.getCallbackUrl());
+        }   );
+
         try {
             List<TokenResponse> tokenResponses = judgeOApi.executeBatchCode(submissionRequests);
-            try {
-                Thread.sleep(4000);
-            } catch(InterruptedException e) {
-                Thread.currentThread().interrupt();
+            userSubmissions.put(request.userId(), tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toSet()));
+            while(userSubmissions.get(request.userId()).size() != 0) {
+                Thread.sleep(1000);
+                //System.out.println("Waiting for the results...");
             }
-            return getBatchCodeResponse(tokenResponses);
+            tokenResponses.stream().forEach(tokenResponse -> System.out.println(tokenResponse.getToken()));
+
+            return getBatchCodeResponse(tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toList()));
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // TODO REMOVE
-    private List<SubmissionDTO> validateSubmission(List<SubmissionDTO> checkedSubmissions) {
-        List<SubmissionDTO> submissionDTOS = new ArrayList<>();
-        int statusId;
-        for(SubmissionDTO submissionDTO : checkedSubmissions) {
-            statusId = submissionDTO.getStatus().getId();
-            if(statusId == 3) {
-                submissionDTOS.add(submissionDTO);
-            }
-            else if(statusId > 4){
-                submissionDTOS.clear();
-                submissionDTOS.add(submissionDTO);
-                return submissionDTOS;
-            }
-        }
-        return submissionDTOS;
+    private String getEncodedString(String string) {
+        return Base64.getEncoder().encodeToString(string.getBytes());
     }
 
-    public List<SubmissionDTO> getBatchCodeResponse(List<TokenResponse> tokens) {
+
+    public List<SubmissionResponse> getBatchCodeResponse(List<String> tokens) {
         return judgeOApi.getBatchCodeResponse(tokens);
     }
 
@@ -136,5 +148,9 @@ public class CodeService {
     }
 
 
-
+    public void removeSubmissionFromWaitingList(SubmissionResponse submission, Long userId) {
+        if (userSubmissions.containsKey(userId) && userSubmissions.get(userId).contains(submission.getToken())) {
+            userSubmissions.get(userId).remove(submission.getToken());
+        }
+    }
 }
