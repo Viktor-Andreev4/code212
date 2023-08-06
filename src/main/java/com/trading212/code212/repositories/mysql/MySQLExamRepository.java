@@ -62,9 +62,12 @@ public class MySQLExamRepository implements ExamRepository {
                 FROM exam
                 WHERE exam_id = ?
                 """;
-        return jdbcTemplate.query(sql, examRowMapper, id)
+
+        Optional<ExamEntity> first = jdbcTemplate.query(sql, examRowMapper, id)
                 .stream()
                 .findFirst();
+        System.out.println(first);
+        return first;
     }
 
     @Override

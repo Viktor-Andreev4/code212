@@ -7,8 +7,6 @@ import com.trading212.code212.api.rest.model.*;
 import com.trading212.code212.core.models.*;
 import com.trading212.code212.repositories.CodeRepository;
 import com.trading212.code212.repositories.LanguageRepository;
-import com.trading212.code212.repositories.StatusRepository;
-import com.trading212.code212.repositories.UserRepository;
 import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.s3.S3Service;
 
@@ -59,7 +57,7 @@ public class CodeService {
     public SolutionCodeDTO insertSolutionCode(SolutionCodeRequest request) {
 
         SolutionCodeEntity solutionCodeEntity = codeRepository.insertSolutionCode(
-                request.userId(), request.problemId(), request.languageId(),request.statusId()
+                request.userId(), request.examId(), request.problemId(), request.languageId(),request.statusId()
         );
 
         return Mappers.fromSolutionCodeEntity(solutionCodeEntity);
@@ -106,7 +104,7 @@ public class CodeService {
             List<SubmissionResponse> batchCodeResponse = getBatchCodeResponse(tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toList()));
 
             int statusId = giveFinalStatus(batchCodeResponse);
-            insertSolutionCode(new SolutionCodeRequest(request.userId(), request.problemId(), languageId, statusId));
+            insertSolutionCode(new SolutionCodeRequest(request.userId(), request.examId(), request.problemId(), languageId, statusId));
 
             return batchCodeResponse;
 

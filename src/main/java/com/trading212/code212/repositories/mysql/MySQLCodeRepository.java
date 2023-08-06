@@ -34,9 +34,9 @@ public class MySQLCodeRepository implements CodeRepository {
     }
 
     @Override
-    public SolutionCodeEntity insertSolutionCode(long userId, int problemId, int languageId, int statusId) {
+    public SolutionCodeEntity insertSolutionCode(long userId, int examId, int problemId, int languageId, int statusId) {
         var sql = """
-                INSERT INTO solution_code (code_url, user_id, problem_id, language_id, status_id)
+                INSERT INTO solution_code (user_id, exam_id, problem_id, language_id, status_id)
                      VALUES (?, ?, ?, ?, ?)
                 """;
         return txTemplate.execute(status -> {
@@ -44,9 +44,10 @@ public class MySQLCodeRepository implements CodeRepository {
             jdbcTemplate.update(connection -> {
                 var ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setLong(1, userId);
-                ps.setLong(2, problemId);
-                ps.setLong(3, languageId);
-                ps.setLong(4, statusId);
+                ps.setInt(2, examId);
+                ps.setLong(3, problemId);
+                ps.setLong(4, languageId);
+                ps.setLong(5, statusId);
                 return ps;
             }, keyHolder);
             Long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
@@ -58,7 +59,7 @@ public class MySQLCodeRepository implements CodeRepository {
     @Override
     public Optional<SolutionCodeEntity> getSolutionCodeById(long id) {
         var sql = """
-                SELECT code_submitted_id, user_id, problem_id, language_id, status_id
+                SELECT code_submitted_id, exam_id, user_id, problem_id, language_id, status_id
                 FROM solution_code
                 WHERE code_submitted_id = ?
                 """;

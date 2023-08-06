@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.trading212.code212.api.rest.model.ProblemRequest;
 import com.trading212.code212.core.models.ProblemDTO;
+
+import com.trading212.code212.repositories.ProblemRepository;
 import com.trading212.code212.repositories.entities.ProblemEntity;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,17 @@ import java.util.Optional;
 @Service
 public class ProblemService {
 
-    private final com.trading212.code212.repositories.ProblemRepository problemRepository;
+    private final ProblemRepository problemRepository;
     private GeneratePresignedUrlRequest generatePresignedUrlRequest;
 
     //@Value("${aws.s3.buckets.problem}")
-    private final String bucketName  = "code212-user-code";;
+    private final String bucketName  = "code212-problems";;
 
     private final AmazonS3 s3;
 
     private Date expiration;
 
-    public ProblemService(com.trading212.code212.repositories.ProblemRepository problemRepository, AmazonS3 s3) {
+    public ProblemService(ProblemRepository problemRepository, AmazonS3 s3) {
         this.problemRepository = problemRepository;
         this.s3 = s3;
     }

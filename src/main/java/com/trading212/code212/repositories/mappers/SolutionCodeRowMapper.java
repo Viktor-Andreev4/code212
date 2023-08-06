@@ -19,17 +19,25 @@ public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
     private final JdbcTemplate jdbcTemplate;
     private final ProblemRepository problemRepository;
     private final UserRepository userRepository;
+    private final LanguageRowMapper languageRowMapper;
+    private final StatusRowMapper statusRowMapper;
     private final ExamRepository examRepository;
 
-    public SolutionCodeRowMapper(JdbcTemplate jdbcTemplate, ProblemRepository problemRepository, UserRepository userRepository, ExamRepository examRepository) {
+    public SolutionCodeRowMapper(JdbcTemplate jdbcTemplate, ProblemRepository problemRepository, UserRepository userRepository, LanguageRowMapper languageRowMapper, StatusRowMapper statusRowMapper, ExamRepository examRepository) {
         this.jdbcTemplate = jdbcTemplate;
         this.problemRepository = problemRepository;
         this.userRepository = userRepository;
+        this.languageRowMapper = languageRowMapper;
+        this.statusRowMapper = statusRowMapper;
         this.examRepository = examRepository;
     }
 
     @Override
     public SolutionCodeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        System.out.println("SolutionCodeRowMapper.mapRow");
+        System.out.println("user repository" + userRepository.getUserById(rs.getLong("user_id")).get());
+        System.out.println("exam repository" + examRepository.getExamById(rs.getInt("exam_id")).get());
+        System.out.println("problem repository" + problemRepository.getProblemById((rs.getInt("problem_id"))).get());
         return new SolutionCodeEntity(
                 rs.getLong("code_submitted_id"),
                 userRepository.getUserById(rs.getLong("user_id")).get(),
@@ -48,7 +56,7 @@ public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
             FROM language 
             WHERE language_id = ?
         """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{languageId}, LanguageEntity.class);
+        return jdbcTemplate.queryForObject(sql, languageRowMapper, languageId);
     }
 
     private StatusEntity getStatus(Integer statusId) {
@@ -57,6 +65,6 @@ public class SolutionCodeRowMapper implements RowMapper<SolutionCodeEntity> {
             FROM status
             WHERE status_id = ?
         """;
-        return jdbcTemplate.queryForObject(sql, new Object[]{statusId}, StatusEntity.class);
+        return jdbcTemplate.queryForObject(sql, statusRowMapper, statusId);
     }
 }

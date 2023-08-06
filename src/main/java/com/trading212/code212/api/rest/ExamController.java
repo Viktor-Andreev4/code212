@@ -19,7 +19,6 @@ public class ExamController {
         this.examService = examService;
     }
 
-    // TODO - make it optional
     @GetMapping
     public ExamDTO getUpcomingExam() {
         return examService.getUpcomingExam();

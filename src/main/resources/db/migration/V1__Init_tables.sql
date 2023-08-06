@@ -66,10 +66,12 @@ CREATE TABLE status (
 CREATE TABLE solution_code(
     code_submitted_id   INT AUTO_INCREMENT PRIMARY KEY,
     user_id             INT NOT NULL,
+    exam_id             INT NOT NULL,
     problem_id          INT NOT NULL,
     language_id         INT NOT NULL,
     status_id           INT NOT NULL,
     CONSTRAINT FK_solution_code_user     FOREIGN KEY (user_id)     REFERENCES user(user_id),
+    CONSTRAINT FK_solution_code_exam     FOREIGN KEY (exam_id)     REFERENCES exam(exam_id),
     CONSTRAINT FK_solution_code_problem  FOREIGN KEY (problem_id)  REFERENCES problem(problem_id),
     CONSTRAINT FK_solution_code_language FOREIGN KEY (language_id) REFERENCES language(language_id),
     CONSTRAINT FK_solution_code_status   FOREIGN KEY (status_id)   REFERENCES status(status_id)
