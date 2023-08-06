@@ -10,6 +10,7 @@ import com.trading212.code212.repositories.LanguageRepository;
 import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.s3.S3Service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -27,8 +28,8 @@ public class CodeService {
     private final ProblemService problemService;
     private final S3Service s3Service;
 
-    //@Value("${aws.s3.buckets.user}")
-    private String bucketName = "code212-user-code";
+    @Value("${aws.s3.buckets.user}")
+    private String bucketName;
     private final AmazonS3 s3;
     private final JudgeOApi judgeOApi;
     private final String SUBMISSIONS_URL = "https://89f6-149-62-206-206.ngrok-free.app/api/v1/code/submissions/";

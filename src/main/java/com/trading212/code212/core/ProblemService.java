@@ -8,6 +8,7 @@ import com.trading212.code212.core.models.ProblemDTO;
 
 import com.trading212.code212.repositories.ProblemRepository;
 import com.trading212.code212.repositories.entities.ProblemEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
@@ -21,8 +22,8 @@ public class ProblemService {
     private final ProblemRepository problemRepository;
     private GeneratePresignedUrlRequest generatePresignedUrlRequest;
 
-    //@Value("${aws.s3.buckets.problem}")
-    private final String bucketName  = "code212-problems";;
+    @Value("${aws.s3.buckets.problem}")
+    private String bucketName;
 
     private final AmazonS3 s3;
 
