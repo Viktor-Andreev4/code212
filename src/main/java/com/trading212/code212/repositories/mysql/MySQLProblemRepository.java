@@ -31,8 +31,8 @@ public class MySQLProblemRepository implements ProblemRepository {
     @Override
     public ProblemEntity createProblem(String title, String description, String inputUrl, String outputUrl) {
         var sql = """
-                INSERT INTO problem (title, description, input_url, output_url)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO problem (title, description)
+                VALUES (?, ?)
                 """;
         return txTemplate.execute(status -> {
             KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -41,17 +41,13 @@ public class MySQLProblemRepository implements ProblemRepository {
                         sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, title);
                 ps.setString(2, description);
-                ps.setString(3, inputUrl);
-                ps.setString(4, outputUrl);
                 return ps;
             }, keyHolder);
             int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
             return new ProblemEntity(
                     id,
                     title,
-                    description,
-                    inputUrl,
-                    outputUrl
+                    description
             );
         });
     }
@@ -83,7 +79,7 @@ public class MySQLProblemRepository implements ProblemRepository {
     @Override
     public List<ProblemEntity> getAllProblems() {
         var sql = """
-                SELECT problem_id, title, description, input_url, output_url
+                SELECT problem_id, title, description
                 FROM problem
                 """;
         return jdbcTemplate.query(sql, problemRowMapper);

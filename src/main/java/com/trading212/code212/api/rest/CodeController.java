@@ -2,10 +2,7 @@ package com.trading212.code212.api.rest;
 
 import com.trading212.code212.api.rest.model.UserCodeRequest;
 import com.trading212.code212.core.CodeService;
-import com.trading212.code212.core.models.SubmissionDTO;
-import com.trading212.code212.core.models.SubmissionRequest;
-import com.trading212.code212.core.models.SubmissionResponse;
-import com.trading212.code212.core.models.TokenResponse;
+import com.trading212.code212.api.rest.model.SubmissionResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +29,10 @@ public class CodeController {
         codeService.removeSubmissionFromWaitingList(submission, userId);
     }
 
-
-
-    @GetMapping("/input")
-    public List<String> getBatchCodeResponse() {
-        // TODO CHANGE
-        return codeService.getOutputForProblem(40);
+    @GetMapping("/upload")
+    public String generateUploadUrlForInput(@RequestParam String userId, @RequestParam String problemName, @RequestParam String uuid) {
+        String objectKey = userId + "/" + problemName + "/" + uuid;
+        return codeService.generatePresignedUrl(objectKey);
     }
 
 }

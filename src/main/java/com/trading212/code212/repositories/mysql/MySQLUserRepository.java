@@ -30,7 +30,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public Optional<UserEntity> getUserById(Long id) {
         var sql = """
-                SELECT user_id, first_name, last_name, email, password, role_id
+                SELECT user_id, first_name, last_name, email, password
                 FROM user
                 WHERE user_id = ?
                 """;
@@ -42,7 +42,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public List<UserEntity> getAllUsers() {
         var sql = """
-                SELECT user_id, first_name, last_name, email, password, role_id
+                SELECT user_id, first_name, last_name, email, password
                 FROM user
                 LIMIT 100
                 """;
@@ -130,7 +130,7 @@ public class MySQLUserRepository implements UserRepository {
     @Override
     public Optional<UserEntity> selectUserByEmail(String email) {
         var sql = """
-                SELECT user_id, first_name, last_name, email, password, role_id
+                SELECT user_id, first_name, last_name, email, password
                 FROM user
                 WHERE email = ?
                 """;

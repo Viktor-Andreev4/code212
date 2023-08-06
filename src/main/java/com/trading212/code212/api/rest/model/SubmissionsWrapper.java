@@ -1,4 +1,4 @@
-package com.trading212.code212.core.models;
+package com.trading212.code212.api.rest.model;
 
 import lombok.Data;
 

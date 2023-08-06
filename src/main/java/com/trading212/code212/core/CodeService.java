@@ -1,15 +1,21 @@
 package com.trading212.code212.core;
 
-import com.trading212.code212.api.rest.model.UserCodeRequest;
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.trading212.code212.api.rest.model.*;
 import com.trading212.code212.core.models.*;
 import com.trading212.code212.repositories.CodeRepository;
 import com.trading212.code212.repositories.LanguageRepository;
-import com.trading212.code212.s3.S3Buckets;
+import com.trading212.code212.repositories.StatusRepository;
+import com.trading212.code212.repositories.UserRepository;
+import com.trading212.code212.repositories.entities.SolutionCodeEntity;
 import com.trading212.code212.s3.S3Service;
 
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,48 +28,41 @@ public class CodeService {
     private final LanguageRepository languageRepository;
     private final ProblemService problemService;
     private final S3Service s3Service;
-    private final S3Buckets s3Buckets;
+
+    //@Value("${aws.s3.buckets.user}")
+    private String bucketName = "code212-user-code";
+    private final AmazonS3 s3;
     private final JudgeOApi judgeOApi;
-    private String SUBMISSIONS_URL = "https://89f6-149-62-206-206.ngrok-free.app/api/v1/code/submissions/";
+    private final String SUBMISSIONS_URL = "https://89f6-149-62-206-206.ngrok-free.app/api/v1/code/submissions/";
     private Map<Long, Set<String>> userSubmissions = new ConcurrentHashMap<>();
+    private Date expiration;
+    private GeneratePresignedUrlRequest generatePresignedUrlRequest;
 
 
-    public CodeService(CodeRepository codeRepository, LanguageRepository languageRepository, ProblemService problemService, S3Service s3Service, S3Buckets s3Buckets, JudgeOApi judgeOApi) {
+    public CodeService(
+            CodeRepository codeRepository,
+            LanguageRepository languageRepository,
+            ProblemService problemService,
+            S3Service s3Service,
+            AmazonS3 s3,
+            JudgeOApi judgeOApi) {
+
         this.codeRepository = codeRepository;
         this.languageRepository = languageRepository;
         this.problemService = problemService;
         this.s3Service = s3Service;
-        this.s3Buckets = s3Buckets;
+        this.s3 = s3;
         this.judgeOApi = judgeOApi;
 
     }
 
-    public SolutionCodeDTO insertSolutionCode() {
+    public SolutionCodeDTO insertSolutionCode(SolutionCodeRequest request) {
 
+        SolutionCodeEntity solutionCodeEntity = codeRepository.insertSolutionCode(
+                request.userId(), request.problemId(), request.languageId(),request.statusId()
+        );
 
-        String res = "1";//executeCode(request.code());
-        // check the output
-        // get the status
-
-        // access the code
-
-        //int languageId = languageRepository.getLanguageByName().id();
-//        String codeLink = "vzemi go ot s3";
-//        int statusId = 1;
-//
-//        SolutionCodeEntity solutionCodeEntity = codeRepository.insertSolutionCode(
-//                codeLink,
-//                request.userId(),
-//                request.problemId(),
-//                languageId,
-//                statusId
-//        );
-//
-//        SolutionCodeDTO solutionCodeDTO = Mappers.fromSolutionCodeEntity(solutionCodeEntity);
-//        //TODO REMOVE THIS
-//        solutionCodeDTO.setCodeLink(res);
-//        return solutionCodeDTO;
-        return null;
+        return Mappers.fromSolutionCodeEntity(solutionCodeEntity);
     }
 
     public List<SubmissionResponse> executeCode(UserCodeRequest request) {
@@ -78,9 +77,8 @@ public class CodeService {
                 .map(this::getEncodedString)
                 .toList();
 
-        int testCases = encodedInput.size();
         System.out.println("Encoded input: " + encodedInput);
-        int languageId = 52; // 62 - java 52 - c++//languageRepository.getLanguageByName(request.language()).id();
+        int languageId = languageRepository.getLanguageByName(request.language()).get().id();
 
         List<SubmissionRequest> submissionRequests = new ArrayList<>();
         for (int i = 0; i < encodedInput.size(); i++) {
@@ -93,7 +91,6 @@ public class CodeService {
             ));
         }
 
-        // DEBUG
         submissionRequests.stream().forEach(submissionRequest -> {
             System.out.println(submissionRequest.getCallbackUrl());
         }   );
@@ -103,15 +100,34 @@ public class CodeService {
             userSubmissions.put(request.userId(), tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toSet()));
             while(userSubmissions.get(request.userId()).size() != 0) {
                 Thread.sleep(1000);
-                //System.out.println("Waiting for the results...");
             }
             tokenResponses.stream().forEach(tokenResponse -> System.out.println(tokenResponse.getToken()));
 
-            return getBatchCodeResponse(tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toList()));
+            List<SubmissionResponse> batchCodeResponse = getBatchCodeResponse(tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toList()));
+
+            int statusId = giveFinalStatus(batchCodeResponse);
+            insertSolutionCode(new SolutionCodeRequest(request.userId(), request.problemId(), languageId, statusId));
+
+            return batchCodeResponse;
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private int giveFinalStatus(List<SubmissionResponse> batchCodeResponse) {
+        int status = 3; // Accepted
+
+        for (SubmissionResponse submissionResponse : batchCodeResponse) {
+            if (submissionResponse.getStatus().getId() > 4) {
+                return submissionResponse.getStatus().getId();
+            }
+            else if (submissionResponse.getStatus().getId() == 4){
+                return submissionResponse.getStatus().getId();
+            }
+        }
+
+        return status;
     }
 
     private String getEncodedString(String string) {
@@ -145,6 +161,22 @@ public class CodeService {
 
     public byte[] getUserCode(Long userId) {
         return null;
+    }
+
+    public String generatePresignedUrl(String objectKey) {
+        expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 60;
+        expiration.setTime(expTimeMillis);
+
+        generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, objectKey)
+                        .withMethod(HttpMethod.PUT)
+                        .withExpiration(expiration)
+                        .withContentType("text/plain");
+        URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
+
+        return url.toString();
     }
 
 

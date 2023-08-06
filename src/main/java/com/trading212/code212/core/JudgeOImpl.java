@@ -1,12 +1,13 @@
 package com.trading212.code212.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.trading212.code212.core.models.*;
+import com.trading212.code212.api.rest.model.SubmissionRequest;
+import com.trading212.code212.api.rest.model.SubmissionResponse;
+import com.trading212.code212.api.rest.model.SubmissionsWrapper;
+import com.trading212.code212.api.rest.model.TokenResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Service
 public class JudgeOImpl implements JudgeOApi {
@@ -91,7 +92,27 @@ public class JudgeOImpl implements JudgeOApi {
         }
         System.out.println("Response body from getBatchCodeResponse\n" + response.body());
 
-        return parseJsonToSubmissionResponse(response.body());
+        List<SubmissionResponse> submissionResponses = parseJsonToSubmissionResponse(response.body());
+        return decoded(submissionResponses);
+    }
+
+    private List<SubmissionResponse> decoded(List<SubmissionResponse> submissionResponses) {
+        System.out.println("Decoding submissions");
+        for (SubmissionResponse submissionResponse : submissionResponses) {
+            System.out.println("Encoded submission response \n" + submissionResponse.getStdin() + "\n" + submissionResponse.getStdout() + "\n" + submissionResponse.getStderr());
+            String decodedInput = new String(Base64.getDecoder().decode(submissionResponse.getStdin().trim()), StandardCharsets.UTF_8);
+            System.out.println("Decoded submission response " + decodedInput);
+
+            String decodedStdout = new String(Base64.getDecoder().decode(submissionResponse.getStdout().trim()), StandardCharsets.UTF_8);
+
+            if (submissionResponse.getStderr() != null) {
+                String decodedStderr = new String(Base64.getDecoder().decode(submissionResponse.getStderr()), StandardCharsets.UTF_8);
+                submissionResponse.setStderr(decodedStderr);
+            }
+            submissionResponse.setStdin(decodedInput);
+            submissionResponse.setStdout(decodedStdout);
+        }
+        return submissionResponses;
     }
 
     private List<SubmissionResponse> parseJsonToSubmissionResponse(String json) {

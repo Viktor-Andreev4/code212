@@ -1,17 +1,12 @@
 package com.trading212.code212.core.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.trading212.code212.repositories.entities.LanguageEntity;
 
-@Data
-@AllArgsConstructor
-public class SolutionCodeDTO {
-
-    private String codeLink;
-    private Long userId;
-    private int problemId;
-    private int languageId;
-    private int statusId;
-
-
+public record SolutionCodeDTO(
+        long codeId,
+        UserDTO user,
+        ProblemDTO problemDTO,
+        LanguageEntity language,
+        StatusDTO status
+) {
 }

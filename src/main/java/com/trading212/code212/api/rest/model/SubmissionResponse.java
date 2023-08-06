@@ -1,12 +1,15 @@
-package com.trading212.code212.core.models;
+package com.trading212.code212.api.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.trading212.code212.core.models.StatusDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 
 @Data
+@AllArgsConstructor
+@ToString
 public class SubmissionResponse {
 
     @JsonProperty("stdin")
@@ -23,4 +26,6 @@ public class SubmissionResponse {
     private String stderr;
     @JsonProperty("status")
     private StatusDTO status;
+
+
 }

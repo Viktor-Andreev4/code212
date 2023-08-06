@@ -12,9 +12,7 @@ class Mappers {
         return new ProblemDTO(
             problemEntity.id(),
             problemEntity.title(),
-            problemEntity.description(),
-            problemEntity.inputUrl(),
-            problemEntity.outputUrl()
+            problemEntity.description()
         );
     }
 
@@ -41,24 +39,21 @@ class Mappers {
     }
 
 
-    //code
     public static SolutionCodeDTO fromSolutionCodeEntity(SolutionCodeEntity solutionCodeEntity) {
         return new SolutionCodeDTO(
-                solutionCodeEntity.codeUrl(),
-                solutionCodeEntity.userId(),
-                solutionCodeEntity.problemId(),
-                solutionCodeEntity.languageId(),
-                solutionCodeEntity.statusId()
+                solutionCodeEntity.id(),
+                fromUserEntity(solutionCodeEntity.user()),
+                fromProblemEntity(solutionCodeEntity.problem()),
+                solutionCodeEntity.language(),
+                fromStatusEntity(solutionCodeEntity.status())
         );
     }
 
 
-
-//    public static GradeDTO fromGradeEntity(GradeEntity gradeEntity) {
-//        return new GradeDTO(
-//                gradeEntity.id(),
-//                gradeEntity
-//        );
-//    }
-
+    public static StatusDTO fromStatusEntity(StatusEntity statusEntity) {
+        return new StatusDTO(
+                statusEntity.statusId(),
+                statusEntity.name()
+        );
+    }
 }

@@ -14,9 +14,7 @@ public class ProblemRowMapper implements RowMapper<ProblemEntity> {
         return new ProblemEntity(
                 rs.getInt("problem_id"),
                 rs.getString("title"),
-                rs.getString("description"),
-                rs.getString("input_url"),
-                rs.getString("output_url")
+                rs.getString("description")
         );
     }
 }

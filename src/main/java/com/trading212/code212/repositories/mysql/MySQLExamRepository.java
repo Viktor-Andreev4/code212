@@ -56,7 +56,7 @@ public class MySQLExamRepository implements ExamRepository {
     }
 
     @Override
-    public Optional<ExamEntity> getExamById(Long id) {
+    public Optional<ExamEntity> getExamById(int id) {
         var sql = """
                 SELECT exam_id, name, start_date, end_date
                 FROM exam

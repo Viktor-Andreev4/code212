@@ -2,19 +2,26 @@ INSERT INTO role (name)
 VALUES ('user'),
        ('admin');
 
-INSERT INTO language (name)
-VALUES ('cpp'),
-       ('java'),
-       ('py'),
-       ('csharp'),
-       ('js');
+INSERT INTO language (language_id, name)
+VALUES (54, 'c++'),
+       (62, 'java'),
+       (71, 'py'),
+       (63, 'js');
 
-INSERT INTO problem (title, description, input_url, output_url)
-VALUES (
-           'Two Sum',
-           'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
-            You may assume that each input would have exactly one solution, and you may not use the same element twice.
-            You can return the answer in any order.',
-            'https://leetcode.com/problems/two-sum/',
-            'https://leetcode.com/problems/two-sum/'
-       );
+INSERT INTO status(status_id, name)
+VALUES
+    (1, 'In Queue'),
+    (2, 'Processing'),
+    (3, 'Accepted'),
+    (4, 'Wrong Answer'),
+    (5, 'Time Limit Exceeded'),
+    (6, 'Compilation Error'),
+    (7, 'Runtime Error (SIGSEGV)'),
+    (8, 'Runtime Error (SIGXFSZ)'),
+    (9, 'Runtime Error (SIGFPE)'),
+    (10, 'Runtime Error (SIGABRT)'),
+    (11, 'Runtime Error (NZEC)'),
+    (12, 'Runtime Error (Other)'),
+    (13, 'Internal Error'),
+    (14, 'Exec Format Error');
+

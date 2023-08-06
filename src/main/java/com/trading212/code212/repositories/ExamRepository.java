@@ -13,7 +13,7 @@ import java.util.Set;
 public interface ExamRepository {
 
     ExamEntity createExam(String title, LocalDateTime startDate, LocalDateTime endDate);
-    Optional<ExamEntity> getExamById(Long id);
+    Optional<ExamEntity> getExamById(int id);
     void deleteExamById(Long id);
     boolean addProblemToExam(Long examID, Long problemID);
     Set<ProblemEntity> getProblemsForExam(Long examID);

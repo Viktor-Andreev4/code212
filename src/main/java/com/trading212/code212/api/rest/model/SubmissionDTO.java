@@ -1,7 +1,7 @@
-package com.trading212.code212.core.models;
+package com.trading212.code212.api.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
+import com.trading212.code212.core.models.StatusDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

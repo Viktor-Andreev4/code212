@@ -1,15 +1,11 @@
 package com.trading212.code212.api.rest;
 
-import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.trading212.code212.api.rest.model.ProblemRequest;
 import com.trading212.code212.core.ProblemService;
 import com.trading212.code212.core.models.ProblemDTO;
 import org.springframework.web.bind.annotation.*;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
-import java.net.URL;
-import java.util.Date;
 import java.util.List;
 
 @RestController

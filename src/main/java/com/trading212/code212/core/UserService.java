@@ -1,6 +1,7 @@
 package com.trading212.code212.core;
 
 import com.trading212.code212.api.rest.model.UserRegistrationRequest;
+import com.trading212.code212.core.models.UserDTO;
 import com.trading212.code212.repositories.UserRepository;
 import com.trading212.code212.repositories.entities.UserEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,5 +51,10 @@ public class UserService {
 
     public Long getUserIdByEmail(String email){
         return repository.getUserIdByEmail(email);
+    }
+
+    public UserDTO getUserById(long id) {
+        UserEntity userEntity = repository.getUserById(id).orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
+        return Mappers.fromUserEntity(userEntity);
     }
 }

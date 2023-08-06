@@ -21,3 +21,11 @@ aws:
       user: code212-user-code
       problem: code212-problems
 
+openai:
+  api:
+    key: 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
+    url:
+
+  model: gpt-3.5-turbo
+
+

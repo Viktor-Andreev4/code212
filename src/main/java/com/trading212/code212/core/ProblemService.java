@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.trading212.code212.api.rest.model.ProblemRequest;
 import com.trading212.code212.core.models.ProblemDTO;
-import com.trading212.code212.repositories.ProblemRepository;
 import com.trading212.code212.repositories.entities.ProblemEntity;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +16,19 @@ import java.util.Optional;
 @Service
 public class ProblemService {
 
-    private final ProblemRepository problemRepository;
+    private final com.trading212.code212.repositories.ProblemRepository problemRepository;
     private GeneratePresignedUrlRequest generatePresignedUrlRequest;
-    private final String bucketName;
+
+    //@Value("${aws.s3.buckets.problem}")
+    private final String bucketName  = "code212-user-code";;
 
     private final AmazonS3 s3;
 
     private Date expiration;
 
-    public ProblemService(ProblemRepository problemRepository, AmazonS3 s3) {
+    public ProblemService(com.trading212.code212.repositories.ProblemRepository problemRepository, AmazonS3 s3) {
         this.problemRepository = problemRepository;
         this.s3 = s3;
-        this.expiration = expiration;
-        this.bucketName = "code212-problems";
-
     }
 
     public ProblemDTO getProblemById(int id) {
@@ -40,22 +38,6 @@ public class ProblemService {
             throw new RuntimeException("Problem not found");
         }
         return Mappers.fromProblemEntity(problem.get());
-    }
-
-    public String getProblemInputUrl(int id) {
-        Optional<ProblemEntity> problem = problemRepository.getProblemById(id);
-        if (problem.isEmpty()) {
-            throw new RuntimeException("Problem not found");
-        }
-        return problem.get().inputUrl();
-    }
-
-    public String getProblemOutputUrl(int id) {
-        Optional<ProblemEntity> problem = problemRepository.getProblemById(id);
-        if (problem.isEmpty()) {
-            throw new RuntimeException("Problem not found");
-        }
-        return problem.get().outputUrl();
     }
 
     public List<ProblemDTO> getAllProblems() {
@@ -79,7 +61,7 @@ public class ProblemService {
     public String generatePresignedUrl(String objectKey) {
         expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 60;
+        expTimeMillis += 1000 * 60;
         expiration.setTime(expTimeMillis);
 
         generatePresignedUrlRequest =
