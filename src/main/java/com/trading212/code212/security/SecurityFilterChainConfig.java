@@ -40,8 +40,12 @@ public class SecurityFilterChainConfig {
                                         HttpMethod.POST,
                                         "api/v1/users",
                                         "api/v1/auth/login",
-                                        "api/v1/bot/chat")
+                                        "api/v1/bot/chat",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**")
                                 .permitAll()
+                                .requestMatchers("/v3/api-docs/**",
+                                        "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.PUT,
                                         "api/v1/code/submissions/**")
                                 .permitAll()

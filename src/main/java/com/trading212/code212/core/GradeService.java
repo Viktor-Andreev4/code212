@@ -53,9 +53,7 @@ public class GradeService {
         String prompt = "You are a judge of a programming competition. You are given submission and problem description, you need to access the submission by the components. Component number one is code performance with max of 30 points, here you need to assess how good of an submissions big o time complexity and big o space complexity. Component number two is code quality, this is if the user is using good names for the variable and the functions, the max points are 10. ";
         prompt += code + problemDescription;
 
-
-        String forObject = restTemplate.getForObject(API_URL, String.class);
-
+        return "";
     }
 
     public int acceptedTests(List<SubmissionResponse> batchCodeResponse) {
