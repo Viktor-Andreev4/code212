@@ -4,6 +4,11 @@ public record GradeEntity(
         Long id,
         Long userId,
         Integer grade,
-        Long problemId
+        String report,
+        Integer examId,
+        Integer problemId
 ) {
+    public GradeEntity(Long userId, Integer grade, String report, Integer examId,Integer problemId) {
+        this(null, userId, grade, report, examId, problemId);
+    }
 }

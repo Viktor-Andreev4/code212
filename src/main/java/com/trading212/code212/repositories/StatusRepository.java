@@ -8,4 +8,6 @@ public interface StatusRepository {
 
     StatusEntity addStatus(int id, String name);
     Optional<StatusEntity> getStatusById(int id);
+
+    Optional<StatusEntity> getStatusByName(String name);
 }

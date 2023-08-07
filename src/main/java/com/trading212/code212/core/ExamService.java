@@ -63,8 +63,13 @@ public class ExamService {
 
         return userExamRepository.getAllUsersForExamWithId(examId)
                 .stream()
-                .map(Mappers::fromUserEntity)
-                .toList();
+                .map(userEntity -> new UserDTO(
+                        userEntity.getId(),
+                        userEntity.getFirstName(),
+                        userEntity.getLastName(),
+                        userEntity.getEmail(),
+                        userEntity.getRoles()
+                )).toList();
     }
 
     public List<ExamDTO> getAllExams() {

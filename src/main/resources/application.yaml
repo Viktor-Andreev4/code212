@@ -24,8 +24,7 @@ aws:
 openai:
   api:
     key: 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
-    url:
-
+    url: https://api.openai.com/v1/chat/completions
   model: gpt-3.5-turbo
 
 

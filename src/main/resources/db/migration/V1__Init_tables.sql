@@ -46,10 +46,11 @@ CREATE TABLE grade (
     grade_id            INT AUTO_INCREMENT PRIMARY KEY,
     user_id             INT NOT NULL,
     test_cases_grade    INT NOT NULL,
-    performance_grade   INT NOT NULL,
-    code_quality_grade  INT NOT NULL,
+    report              TEXT NOT NULL,
+    exam_id             INT NOT NULL,
     problem_id          INT NOT NULL,
     CONSTRAINT FK_grade_user FOREIGN KEY (user_id) REFERENCES user(user_id),
+    CONSTRAINT FK_grade_exam FOREIGN KEY (exam_id) REFERENCES exam(exam_id),
     CONSTRAINT FK_grade_problem FOREIGN KEY (problem_id) REFERENCES problem(problem_id)
 );
 

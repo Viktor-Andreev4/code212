@@ -37,7 +37,7 @@ public class MySQLUserExamRepository implements UserExamRepository {
     @Override
     public List<UserEntity> getAllUsersForExamWithId(Long examId) {
         var sql = """
-                SELECT u.user_id, u.first_name, u.last_name, u.email, u.password, u.role_id
+                SELECT u.user_id, u.first_name, u.last_name, u.email, u.password
                 FROM user u
                 JOIN exam_user ue ON u.user_id = ue.user_id
                 WHERE exam_id = ?

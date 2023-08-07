@@ -97,13 +97,14 @@ public class JudgeOImpl implements JudgeOApi {
     }
 
     private List<SubmissionResponse> decoded(List<SubmissionResponse> submissionResponses) {
-        System.out.println("Decoding submissions");
-        for (SubmissionResponse submissionResponse : submissionResponses) {
-            System.out.println("Encoded submission response \n" + submissionResponse.getStdin() + "\n" + submissionResponse.getStdout() + "\n" + submissionResponse.getStderr());
-            String decodedInput = new String(Base64.getDecoder().decode(submissionResponse.getStdin().trim()), StandardCharsets.UTF_8);
-            System.out.println("Decoded submission response " + decodedInput);
 
-            String decodedStdout = new String(Base64.getDecoder().decode(submissionResponse.getStdout().trim()), StandardCharsets.UTF_8);
+        for (SubmissionResponse submissionResponse : submissionResponses) {
+            String decodedInput = new String(Base64.getDecoder().decode(submissionResponse.getStdin().trim()), StandardCharsets.UTF_8);
+             String decodedStdout = null;
+            if (submissionResponse.getStdout() != null) {
+                decodedStdout = new String(Base64.getDecoder().decode(submissionResponse.getStdout().trim()), StandardCharsets.UTF_8);
+
+            }
 
             if (submissionResponse.getStderr() != null) {
                 String decodedStderr = new String(Base64.getDecoder().decode(submissionResponse.getStderr()), StandardCharsets.UTF_8);
@@ -114,6 +115,8 @@ public class JudgeOImpl implements JudgeOApi {
         }
         return submissionResponses;
     }
+
+
 
     private List<SubmissionResponse> parseJsonToSubmissionResponse(String json) {
         System.out.println("Parsing submissions");

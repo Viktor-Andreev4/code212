@@ -39,7 +39,8 @@ public class SecurityFilterChainConfig {
                                 .requestMatchers(
                                         HttpMethod.POST,
                                         "api/v1/users",
-                                        "api/v1/auth/login")
+                                        "api/v1/auth/login",
+                                        "api/v1/bot/chat")
                                 .permitAll()
                                 .requestMatchers(HttpMethod.PUT,
                                         "api/v1/code/submissions/**")

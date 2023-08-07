@@ -20,13 +20,11 @@ public class CodeController {
 
     @PostMapping("/execute")
     public List<SubmissionResponse> getBatchCodeResponse(@RequestBody UserCodeRequest request) {
-        System.out.println("USERCODEREQUEST----------- " + request.examId());
         return codeService.executeCode(request);
     }
 
     @PutMapping("/submissions/{userId}")
     public void getBatchCodeResponse(@RequestBody SubmissionResponse submission, @PathVariable Long userId) {
-        System.out.println("HIT");
         codeService.removeSubmissionFromWaitingList(submission, userId);
     }
 

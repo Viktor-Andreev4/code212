@@ -42,4 +42,14 @@ public class MySQLStatusRepository implements StatusRepository {
                 """;
         return jdbcTemplate.query(sql, statusRowMapper, id).stream().findFirst();
     }
+
+    @Override
+    public Optional<StatusEntity> getStatusByName(String name) {
+        var sql = """
+                SELECT status_id, name
+                FROM status
+                WHERE name = ?
+                """;
+        return jdbcTemplate.query(sql, statusRowMapper, name).stream().findFirst();
+    }
 }

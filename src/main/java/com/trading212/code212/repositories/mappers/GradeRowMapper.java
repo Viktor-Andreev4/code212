@@ -16,8 +16,10 @@ public class GradeRowMapper implements RowMapper<GradeEntity> {
         return new GradeEntity(
                 rs.getLong("grade_id"),
                 rs.getLong("user_id"),
-                rs.getInt("grade"),
-                rs.getLong("exam_id")
+                rs.getInt("test_cases_grade"),
+                rs.getString("report"),
+                rs.getInt("exam_id"),
+                rs.getInt("problem_id")
         );
     }
 }

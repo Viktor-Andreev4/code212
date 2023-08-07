@@ -27,4 +27,12 @@ public class StatusService {
         StatusEntity statusEntity = statusRepository.addStatus(statusDTO.getId(), statusDTO.getDescription());
         return new StatusDTO(statusEntity.statusId(), statusEntity.name());
     }
+
+    public int getStatusIdByName(String name) {
+        Optional<StatusEntity> status = statusRepository.getStatusByName(name);
+        if (status.isEmpty()) {
+            return -1;
+        }
+        return status.get().statusId();
+    }
 }

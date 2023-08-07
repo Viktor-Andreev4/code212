@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +25,8 @@ public class CodeService {
     private final CodeRepository codeRepository;
     private final LanguageRepository languageRepository;
     private final ProblemService problemService;
+    private final GradeService gradeService;
+    private final StatusService statusService;
     private final S3Service s3Service;
 
     @Value("${aws.s3.buckets.user}")
@@ -33,7 +34,7 @@ public class CodeService {
     private final AmazonS3 s3;
     private final JudgeOApi judgeOApi;
     private final String SUBMISSIONS_URL = "https://89f6-149-62-206-206.ngrok-free.app/api/v1/code/submissions/";
-    private Map<Long, Set<String>> userSubmissions = new ConcurrentHashMap<>();
+    private Map<Long, Set<String>> userSubmissions = new HashMap<>();
     private Date expiration;
     private GeneratePresignedUrlRequest generatePresignedUrlRequest;
 
@@ -42,13 +43,15 @@ public class CodeService {
             CodeRepository codeRepository,
             LanguageRepository languageRepository,
             ProblemService problemService,
-            S3Service s3Service,
+            GradeService gradeService, StatusService statusService, S3Service s3Service,
             AmazonS3 s3,
             JudgeOApi judgeOApi) {
 
         this.codeRepository = codeRepository;
         this.languageRepository = languageRepository;
         this.problemService = problemService;
+        this.gradeService = gradeService;
+        this.statusService = statusService;
         this.s3Service = s3Service;
         this.s3 = s3;
         this.judgeOApi = judgeOApi;
@@ -76,7 +79,6 @@ public class CodeService {
                 .map(this::getEncodedString)
                 .toList();
 
-        System.out.println("Encoded input: " + encodedInput);
         int languageId = languageRepository.getLanguageByName(request.language()).get().id();
 
         List<SubmissionRequest> submissionRequests = new ArrayList<>();
@@ -100,12 +102,13 @@ public class CodeService {
             while(userSubmissions.get(request.userId()).size() != 0) {
                 Thread.sleep(1000);
             }
-            tokenResponses.stream().forEach(tokenResponse -> System.out.println(tokenResponse.getToken()));
 
             List<SubmissionResponse> batchCodeResponse = getBatchCodeResponse(tokenResponses.stream().map(TokenResponse::getToken).collect(Collectors.toList()));
 
+            gradeService.calculateGrade(batchCodeResponse, request.code(), request.examId(), request.problemId(), request.userId());
             int statusId = giveFinalStatus(batchCodeResponse);
             insertSolutionCode(new SolutionCodeRequest(request.userId(), request.examId(), request.problemId(), languageId, statusId));
+
 
             return batchCodeResponse;
 
@@ -115,8 +118,7 @@ public class CodeService {
     }
 
     private int giveFinalStatus(List<SubmissionResponse> batchCodeResponse) {
-        int status = 3; // Accepted
-
+        int status = statusService.getStatusIdByName("Accepted"); // Accepted
         for (SubmissionResponse submissionResponse : batchCodeResponse) {
             if (submissionResponse.getStatus().getId() > 4) {
                 return submissionResponse.getStatus().getId();
