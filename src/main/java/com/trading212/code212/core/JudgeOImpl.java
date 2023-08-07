@@ -40,7 +40,7 @@ public class JudgeOImpl implements JudgeOApi {
                 .uri(URI.create("https://judge0-ce.p.rapidapi.com/submissions/batch?base64_encoded=true"))
                 .header("content-type", "application/json")
                 .header("Content-Type", "application/json")
-                .header("X-RapidAPI-Key", "bdeda95a1dmsh52a5dcfa61ac38cp1095fdjsn5d333499eee4")
+                .header("X-RapidAPI-Key", "")
                 .header("X-RapidAPI-Host", "judge0-ce.p.rapidapi.com")
                 .method("POST", HttpRequest
                         .BodyPublishers
@@ -80,7 +80,7 @@ public class JudgeOImpl implements JudgeOApi {
         String separatedTokens = concatenateTokenValues(tokens, tokenSeparator);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://judge0-ce.p.rapidapi.com/submissions/batch?tokens=" + separatedTokens + "&base64_encoded=true&fields=*"))
-                .header("X-RapidAPI-Key", "bdeda95a1dmsh52a5dcfa61ac38cp1095fdjsn5d333499eee4")
+                .header("X-RapidAPI-Key", "")
                 .header("X-RapidAPI-Host", "judge0-ce.p.rapidapi.com")
                 .method("GET", HttpRequest.BodyPublishers.noBody())
                 .build();
